@@ -1,5 +1,6 @@
 package com.vincennlin.collofulbackend.controller;
 
+import com.vincennlin.collofulbackend.controller.swagger.UserControllerSwagger;
 import com.vincennlin.collofulbackend.payload.user.*;
 import com.vincennlin.collofulbackend.service.user.UserService;
 import jakarta.validation.Valid;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
-public class UserController implements UserControllerSwagger{
+public class UserController implements UserControllerSwagger {
 
     private Environment env;
 

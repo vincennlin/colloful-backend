@@ -131,6 +131,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getCurrentUser() {
+        return userRepository.findById(getCurrentUserId())
+                .orElseThrow(() -> new UserNotFoundException(getCurrentUserId()));
+    }
+
+    @Override
+    public Long getCurrentUserId() {
+        return Long.parseLong(getAuthentication().getPrincipal().toString());
+    }
+
+    @Override
     public List<AccountInfoDto> getAllUsers() {
 
         return userRepository.findAll().stream().map(user ->
@@ -231,10 +242,6 @@ public class UserServiceImpl implements UserService {
 
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    private Long getCurrentUserId() {
-        return Long.parseLong(getAuthentication().getPrincipal().toString());
     }
 
     private void authorizeByUserId(Long userId) {

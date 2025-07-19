@@ -1,5 +1,6 @@
 package com.vincennlin.collofulbackend.service.user;
 
+import com.vincennlin.collofulbackend.entity.user.User;
 import com.vincennlin.collofulbackend.payload.user.*;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -14,6 +15,10 @@ public interface UserService extends UserDetailsService {
     UserDto getUserByUserId(Long userId);
 
     AccountInfoDto getCurrentAccountInfo();
+
+    User getCurrentUser();
+
+    Long getCurrentUserId();
 
 //    byte[] getProfilePicture();
 

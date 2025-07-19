@@ -1,4 +1,4 @@
-package com.vincennlin.collofulbackend.controller;
+package com.vincennlin.collofulbackend.controller.swagger;
 
 import com.vincennlin.collofulbackend.payload.user.*;
 import io.swagger.v3.oas.annotations.Operation;
