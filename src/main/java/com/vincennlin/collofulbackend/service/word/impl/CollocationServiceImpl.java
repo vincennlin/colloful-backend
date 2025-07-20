@@ -51,11 +51,15 @@ public class CollocationServiceImpl implements CollocationService {
     @Override
     public CollocationDto createCollocation(CollocationDto collocationDto, Definition definition) {
 
+        return collocationMapper.mapToDto(createCollocationAndGetEntity(collocationDto, definition));
+    }
+
+    @Override
+    public Collocation createCollocationAndGetEntity(CollocationDto collocationDto, Definition definition) {
+
         Collocation collocation = new Collocation(collocationDto.getContent(), collocationDto.getMeaning(), definition);
 
-        Collocation newCollocation = collocationRepository.save(collocation);
-
-        return collocationMapper.mapToDto(newCollocation);
+        return collocationRepository.save(collocation);
     }
 
     @Override
@@ -80,6 +84,11 @@ public class CollocationServiceImpl implements CollocationService {
         definition.getCollocations().remove(collocation);
 
         collocationRepository.delete(collocation);
+    }
+
+    @Override
+    public Collocation saveCollocation(Collocation collocation) {
+        return collocationRepository.save(collocation);
     }
 
     private void checkCollocationOwnership(Collocation collocation) {

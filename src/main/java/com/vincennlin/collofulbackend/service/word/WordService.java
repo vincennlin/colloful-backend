@@ -15,7 +15,13 @@ public interface WordService {
 
     WordDto createWord(WordDto wordDto);
 
+    Word createWordAndGetEntity(WordDto wordDto);
+
     WordDto updateWord(Long wordId, WordDto wordDto);
 
     void deleteWordById(Long wordId);
+
+    Word saveWord(Word word);
+
+    WordDto mapToDto(Word word);
 }

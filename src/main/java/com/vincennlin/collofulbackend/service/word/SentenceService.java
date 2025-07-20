@@ -16,6 +16,8 @@ public interface SentenceService {
 
     SentenceDto createSentence(SentenceDto sentenceDto, Collocation collocation);
 
+    Sentence createSentenceAndGetEntity(SentenceDto sentenceDto, Collocation collocation);
+
     SentenceDto updateSentence(Long sentenceId, SentenceDto sentenceDto);
 
     void deleteSentenceById(Long sentenceId);

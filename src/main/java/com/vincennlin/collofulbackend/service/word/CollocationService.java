@@ -16,7 +16,11 @@ public interface CollocationService {
 
     CollocationDto createCollocation(CollocationDto collocationDto, Definition definition);
 
+    Collocation createCollocationAndGetEntity(CollocationDto collocationDto, Definition definition);
+
     CollocationDto updateCollocation(Long collocationId, CollocationDto collocationDto);
 
     void deleteCollocationById(Long collocationId);
+
+    Collocation saveCollocation(Collocation collocation);
 }

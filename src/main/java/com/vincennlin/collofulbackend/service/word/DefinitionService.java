@@ -16,7 +16,11 @@ public interface DefinitionService {
 
     DefinitionDto createDefinition(DefinitionDto definitionDto, Word word);
 
+    Definition createDefinitionAndGetEntity(DefinitionDto definitionDto, Word word);
+
     DefinitionDto updateDefinition(Long definitionId, DefinitionDto definitionDto);
 
     void deleteDefinitionById(Long definitionId);
+
+    Definition saveDefinition(Definition definition);
 }

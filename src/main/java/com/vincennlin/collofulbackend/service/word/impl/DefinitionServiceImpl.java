@@ -12,6 +12,7 @@ import com.vincennlin.collofulbackend.service.word.DefinitionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -50,12 +51,16 @@ public class DefinitionServiceImpl implements DefinitionService {
     @Override
     public DefinitionDto createDefinition(DefinitionDto definitionDto, Word word) {
 
+        return definitionMapper.mapToDto(createDefinitionAndGetEntity(definitionDto, word));
+    }
+
+    @Override
+    public Definition createDefinitionAndGetEntity(DefinitionDto definitionDto, Word word) {
+
         Definition definition = new Definition(
                 definitionDto.getMeaning(), definitionDto.getPartOfSpeech(), word);
 
-        Definition newDefinition = definitionRepository.save(definition);
-
-        return definitionMapper.mapToDto(newDefinition);
+        return definitionRepository.save(definition);
     }
 
     @Override
@@ -80,6 +85,11 @@ public class DefinitionServiceImpl implements DefinitionService {
         word.getDefinitions().remove(definition);
 
         definitionRepository.delete(definition);
+    }
+
+    @Override
+    public Definition saveDefinition(Definition definition) {
+        return definitionRepository.save(definition);
     }
 
     private void checkDefinitionOwnership(Definition definition) {

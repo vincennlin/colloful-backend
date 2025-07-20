@@ -31,7 +31,7 @@ public class Sentence {
     private String translation;
 
     @ManyToOne(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
     )
     @JoinColumn(name = "collocation_id", referencedColumnName = "id")

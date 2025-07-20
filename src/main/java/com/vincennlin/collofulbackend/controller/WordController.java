@@ -1,8 +1,14 @@
 package com.vincennlin.collofulbackend.controller;
 
+import com.vincennlin.collofulbackend.entity.word.Collocation;
+import com.vincennlin.collofulbackend.entity.word.Definition;
+import com.vincennlin.collofulbackend.entity.word.Sentence;
+import com.vincennlin.collofulbackend.entity.word.Word;
 import com.vincennlin.collofulbackend.payload.constants.PageConstants;
-import com.vincennlin.collofulbackend.payload.word.WordDto;
-import com.vincennlin.collofulbackend.payload.word.WordPageResponse;
+import com.vincennlin.collofulbackend.payload.word.*;
+import com.vincennlin.collofulbackend.service.word.CollocationService;
+import com.vincennlin.collofulbackend.service.word.DefinitionService;
+import com.vincennlin.collofulbackend.service.word.SentenceService;
 import com.vincennlin.collofulbackend.service.word.WordService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -21,6 +27,9 @@ import org.springframework.web.bind.annotation.*;
 public class WordController {
 
     private final WordService wordService;
+    private final DefinitionService definitionService;
+    private final CollocationService collocationService;
+    private final SentenceService sentenceService;
 
     @GetMapping
     public ResponseEntity<WordPageResponse> getWords(
@@ -48,6 +57,37 @@ public class WordController {
     public ResponseEntity<WordDto> createWord(@Valid @RequestBody WordDto wordDto) {
 
         WordDto responseWordDto = wordService.createWord(wordDto);
+
+        return new ResponseEntity<>(responseWordDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = {"/details"})
+    public ResponseEntity<WordDto> createWordWithDetails(@Valid @RequestBody CreateWordWithDetailRequest request) {
+
+        Word word = wordService.createWordAndGetEntity(new WordDto(request.getName()));
+
+        for (DefinitionDto definitionDto : request.getDefinitions()) {
+            Definition definition = definitionService.createDefinitionAndGetEntity(definitionDto, word);
+
+            for (CollocationDto collocationDto : definitionDto.getCollocations()) {
+                Collocation collocation = collocationService.createCollocationAndGetEntity(collocationDto, definition);
+
+                for (SentenceDto sentenceDto : collocationDto.getSentences()) {
+                    Sentence savedSentence = sentenceService.createSentenceAndGetEntity(sentenceDto, collocation);
+                    collocation.getSentences().add(savedSentence);
+                }
+
+                Collocation savedCollocation = collocationService.saveCollocation(collocation);
+                definition.getCollocations().add(savedCollocation);
+            }
+
+            Definition savedDefinition = definitionService.saveDefinition(definition);
+            word.getDefinitions().add(savedDefinition);
+        }
+
+        Word savedWord = wordService.saveWord(word);
+
+        WordDto responseWordDto = wordService.mapToDto(savedWord);
 
         return new ResponseEntity<>(responseWordDto, HttpStatus.CREATED);
     }

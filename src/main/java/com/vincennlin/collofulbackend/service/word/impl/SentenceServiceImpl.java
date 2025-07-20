@@ -48,11 +48,15 @@ public class SentenceServiceImpl implements SentenceService {
     @Override
     public SentenceDto createSentence(SentenceDto sentenceDto, Collocation collocation) {
 
+        return sentenceMapper.mapToDto(createSentenceAndGetEntity(sentenceDto, collocation));
+    }
+
+    @Override
+    public Sentence createSentenceAndGetEntity(SentenceDto sentenceDto, Collocation collocation) {
+
         Sentence sentence = new Sentence(sentenceDto.getContent(), sentenceDto.getTranslation(),  collocation);
 
-        Sentence newSentence = sentenceRepository.save(sentence);
-
-        return sentenceMapper.mapToDto(newSentence);
+        return sentenceRepository.save(sentence);
     }
 
     @Override

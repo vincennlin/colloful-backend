@@ -54,11 +54,15 @@ public class WordServiceImpl implements WordService {
     @Override
     public WordDto createWord(WordDto wordDto) {
 
+        return wordMapper.mapToDto(createWordAndGetEntity(wordDto));
+    }
+
+    @Override
+    public Word createWordAndGetEntity(WordDto wordDto) {
+
         Word word = new Word(userService.getCurrentUser(), wordDto.getName());
 
-        Word newWord = wordRepository.save(word);
-
-        return wordMapper.mapToDto(newWord);
+        return wordRepository.save(word);
     }
 
     @Override
@@ -79,6 +83,16 @@ public class WordServiceImpl implements WordService {
         Word word = getWordEntityById(wordId);
 
         wordRepository.delete(word);
+    }
+
+    @Override
+    public Word saveWord(Word word) {
+        return wordRepository.save(word);
+    }
+
+    @Override
+    public WordDto mapToDto(Word word) {
+        return wordMapper.mapToDto(word);
     }
 
     private void checkWordOwnership(Word word) {

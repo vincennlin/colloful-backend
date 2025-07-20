@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,6 +24,7 @@ public class Collocation {
         this.content = content;
         this.meaning = meaning;
         this.definition = definition;
+        this.sentences = new ArrayList<>();
     }
 
     @Id
@@ -36,7 +38,7 @@ public class Collocation {
     private String meaning;
 
     @ManyToOne(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}
     )
     @JoinColumn(name = "definition_id", referencedColumnName = "id")
