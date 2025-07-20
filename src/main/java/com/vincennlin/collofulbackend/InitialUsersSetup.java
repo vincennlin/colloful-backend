@@ -36,34 +36,34 @@ public class InitialUsersSetup {
     @Transactional
     @EventListener
     public void onApplicationEvent(ApplicationReadyEvent event) {
-        logger.info("Application ready event triggered from InitialUsersSetup.");
-
-        Authority readAuthority = createAuthority("READ");
-        Authority createAuthority = createAuthority("CREATE");
-        Authority updateAuthority = createAuthority("UPDATE");
-        Authority deleteAuthority = createAuthority("DELETE");
-        Authority advancedAuthority = createAuthority("ADVANCED");
-
-        Set<Authority> basicAuthorities = Set.of(readAuthority, createAuthority, updateAuthority, deleteAuthority);
-        Set<Authority> advancedAuthorities = Set.of(readAuthority, createAuthority, updateAuthority, deleteAuthority, advancedAuthority);
-
-        createRole(Roles.ROLE_USER.name(), basicAuthorities);
-        Role adminRole = createRole(Roles.ROLE_ADMIN.name(), advancedAuthorities);
-
-        if (adminRole == null) return;
-
-        User admin = new User();
-        admin.setName("admin");
-        admin.setUsername("admin");
-        admin.setEmail("admin@gmail.com");
-        admin.setPassword(passwordEncoder.encode("admin"));
-        admin.setRoles(Set.of(roleRepository.findByName(Roles.ROLE_ADMIN.name())));
-
-        Optional<User> storedAdmin = userRepository.findByEmail(admin.getEmail());
-
-        if (storedAdmin.isEmpty()) {
-            userRepository.save(admin);
-        }
+//        logger.info("Application ready event triggered from InitialUsersSetup.");
+//
+//        Authority readAuthority = createAuthority("READ");
+//        Authority createAuthority = createAuthority("CREATE");
+//        Authority updateAuthority = createAuthority("UPDATE");
+//        Authority deleteAuthority = createAuthority("DELETE");
+//        Authority advancedAuthority = createAuthority("ADVANCED");
+//
+//        Set<Authority> basicAuthorities = Set.of(readAuthority, createAuthority, updateAuthority, deleteAuthority);
+//        Set<Authority> advancedAuthorities = Set.of(readAuthority, createAuthority, updateAuthority, deleteAuthority, advancedAuthority);
+//
+//        createRole(Roles.ROLE_USER.name(), basicAuthorities);
+//        Role adminRole = createRole(Roles.ROLE_ADMIN.name(), advancedAuthorities);
+//
+//        if (adminRole == null) return;
+//
+//        User admin = new User();
+//        admin.setName("admin");
+//        admin.setUsername("admin");
+//        admin.setEmail("admin@gmail.com");
+//        admin.setPassword(passwordEncoder.encode("admin"));
+//        admin.setRoles(Set.of(roleRepository.findByName(Roles.ROLE_ADMIN.name())));
+//
+//        Optional<User> storedAdmin = userRepository.findByEmail(admin.getEmail());
+//
+//        if (storedAdmin.isEmpty()) {
+//            userRepository.save(admin);
+//        }
     }
 
     @Transactional
