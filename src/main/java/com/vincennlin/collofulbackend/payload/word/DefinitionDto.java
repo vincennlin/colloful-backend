@@ -16,14 +16,23 @@ import java.util.List;
 @AllArgsConstructor
 public class DefinitionDto {
 
-    @JsonProperty(value = "id")
+    @JsonProperty(
+            value = "id",
+            access = JsonProperty.Access.READ_ONLY
+    )
     private Long id;
 
-    @JsonProperty(value = "meaning")
+    @JsonProperty(
+            value = "word_name",
+            access = JsonProperty.Access.READ_ONLY
+    )
+    private String wordName;
+
+    @JsonProperty(value = "meaning", required = true)
     private String meaning;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty(value = "sub_part")
+    @JsonProperty(value = "sub_part", required = true)
     private SubPart subPart;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

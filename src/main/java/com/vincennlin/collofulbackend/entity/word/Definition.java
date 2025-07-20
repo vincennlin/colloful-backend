@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -21,6 +22,13 @@ import java.util.List;
         }
 )
 public class Definition {
+
+    public Definition(String meaning, SubPart subPart, Word word) {
+        this.meaning = meaning;
+        this.subPart = subPart;
+        this.word = word;
+        this.collocation = new ArrayList<>();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,4 +54,8 @@ public class Definition {
             cascade = CascadeType.ALL
     )
     private List<Collocation> collocation;
+
+    public Long getUserId() {
+        return word.getUser().getId();
+    }
 }

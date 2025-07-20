@@ -16,7 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 public class WordDto {
 
-    @JsonProperty(value = "id")
+    @JsonProperty(
+            value = "id",
+            access = JsonProperty.Access.READ_ONLY
+    )
     private Long id;
 
     @JsonProperty(

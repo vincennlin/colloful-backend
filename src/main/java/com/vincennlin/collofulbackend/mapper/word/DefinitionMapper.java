@@ -5,6 +5,9 @@ import com.vincennlin.collofulbackend.payload.word.DefinitionDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class DefinitionMapper {
 
@@ -15,6 +18,14 @@ public class DefinitionMapper {
     }
 
     public DefinitionDto mapToDto(Definition definition) {
-        return modelMapper.map(definition, DefinitionDto.class);
+        DefinitionDto definitionDto = modelMapper.map(definition, DefinitionDto.class);
+        definitionDto.setWordName(definition.getWord().getName());
+        return definitionDto;
+    }
+
+    public List<DefinitionDto> mapToDtoList(List<Definition> definitions) {
+        return definitions.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 }
