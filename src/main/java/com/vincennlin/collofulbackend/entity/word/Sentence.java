@@ -14,11 +14,17 @@ import lombok.Setter;
 @Table(name = "sentences")
 public class Sentence {
 
+    public Sentence(String content, String translation, Collocation collocation) {
+        this.content = content;
+        this.translation = translation;
+        this.collocation = collocation;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, length = 300)
     private String content;
 
     @Column(length = 100)
@@ -30,4 +36,8 @@ public class Sentence {
     )
     @JoinColumn(name = "collocation_id", referencedColumnName = "id")
     private Collocation collocation;
+
+    public Long getUserId() {
+        return collocation.getUserId();
+    }
 }
