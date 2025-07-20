@@ -24,11 +24,18 @@ public class WordServiceImpl implements WordService {
     @Override
     public WordDto getWordById(Long wordId) {
 
-        Word word = getWordEntityById(wordId);
+        return wordMapper.mapToDto(getWordEntityById(wordId));
+    }
+
+    @Override
+    public Word getWordEntityById(Long wordId) {
+
+        Word word = wordRepository.findById(wordId)
+                .orElseThrow(() -> new ResourceNotFoundException("'Word'", "'Id'", wordId));
 
         checkWordOwnership(word);
 
-        return wordMapper.mapToDto(word);
+        return word;
     }
 
     @Override
@@ -46,8 +53,6 @@ public class WordServiceImpl implements WordService {
 
         Word word = getWordEntityById(wordId);
 
-        checkWordOwnership(word);
-
         word.setName(wordDto.getName());
         word.setPartOfSpeech(wordDto.getPartOfSpeech());
 
@@ -61,14 +66,7 @@ public class WordServiceImpl implements WordService {
 
         Word word = getWordEntityById(wordId);
 
-        checkWordOwnership(word);
-
         wordRepository.delete(word);
-    }
-
-    private Word getWordEntityById(Long wordId) {
-        return wordRepository.findById(wordId)
-                .orElseThrow(() -> new ResourceNotFoundException("'Word'", "'Id'", wordId));
     }
 
     private void checkWordOwnership(Word word) {

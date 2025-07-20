@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/words")
 public class WordController {
 
     private final WordService wordService;
 
-    @GetMapping(value = {"/word/{word_id}"})
-    public ResponseEntity<WordDto> getWordById(@PathVariable Long word_id) {
+    @GetMapping(value = {"/{word_id}"})
+    public ResponseEntity<WordDto> getWordById(@PathVariable(value = "word_id") Long wordId) {
 
-        WordDto wordDto = wordService.getWordById(word_id);
+        WordDto wordDto = wordService.getWordById(wordId);
 
         return new ResponseEntity<>(wordDto, HttpStatus.OK);
     }
 
-    @PostMapping(value = {"/word"})
+    @PostMapping
     public ResponseEntity<WordDto> createWord(@Valid @RequestBody WordDto wordDto) {
 
         WordDto responseWordDto = wordService.createWord(wordDto);
@@ -31,19 +31,19 @@ public class WordController {
         return new ResponseEntity<>(responseWordDto, HttpStatus.CREATED);
     }
 
-    @PostMapping(value = {"/word/{word_id}"})
+    @PutMapping(value = {"/{word_id}"})
     public ResponseEntity<WordDto> updateWord(@Valid @RequestBody WordDto wordDto,
-                                              @PathVariable Long word_id) {
+                                              @PathVariable(value = "word_id") Long wordId) {
 
-        WordDto responseWordDto = wordService.updateWord(word_id, wordDto);
+        WordDto responseWordDto = wordService.updateWord(wordId, wordDto);
 
         return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = {"/word/{word_id}"})
-    public ResponseEntity<Void> deleteWordById(@PathVariable Long word_id) {
+    @DeleteMapping(value = {"/{word_id}"})
+    public ResponseEntity<Void> deleteWordById(@PathVariable(value = "word_id") Long wordId) {
 
-        wordService.deleteWordById(word_id);
+        wordService.deleteWordById(wordId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
