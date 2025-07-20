@@ -19,6 +19,12 @@ import java.util.List;
 )
 public class Collocation {
 
+    public Collocation(String content, String meaning, Definition definition) {
+        this.content = content;
+        this.meaning = meaning;
+        this.definition = definition;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,4 +48,8 @@ public class Collocation {
             cascade = CascadeType.ALL
     )
     private List<Sentence> sentences;
+
+    public Long getUserId() {
+        return definition.getUserId();
+    }
 }

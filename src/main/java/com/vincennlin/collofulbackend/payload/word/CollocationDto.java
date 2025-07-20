@@ -15,10 +15,13 @@ import java.util.List;
 @AllArgsConstructor
 public class CollocationDto {
 
-    @JsonProperty(value = "id")
+    @JsonProperty(
+            value = "id",
+            access = JsonProperty.Access.READ_ONLY
+    )
     private Long id;
 
-    @JsonProperty(value = "content")
+    @JsonProperty(value = "content", required = true)
     private String content;
 
     @JsonProperty(value = "meaning")

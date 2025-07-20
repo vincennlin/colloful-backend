@@ -27,7 +27,7 @@ public class Definition {
         this.meaning = meaning;
         this.partOfSpeech = partOfSpeech;
         this.word = word;
-        this.collocation = new ArrayList<>();
+        this.collocations = new ArrayList<>();
     }
 
     @Id
@@ -53,7 +53,7 @@ public class Definition {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
-    private List<Collocation> collocation;
+    private List<Collocation> collocations;
 
     public Long getUserId() {
         return word.getUser().getId();
