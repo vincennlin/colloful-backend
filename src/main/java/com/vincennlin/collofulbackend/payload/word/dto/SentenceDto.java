@@ -12,6 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SentenceDto {
 
+    public SentenceDto(String content, String translation) {
+        this.content = content;
+        this.translation = translation;
+    }
+
     @JsonProperty(
             value = "id",
             access = JsonProperty.Access.READ_ONLY

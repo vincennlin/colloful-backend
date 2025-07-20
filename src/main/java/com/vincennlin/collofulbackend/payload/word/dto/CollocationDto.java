@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -14,6 +15,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CollocationDto {
+
+    public CollocationDto(String content, String meaning) {
+        this.content = content;
+        this.meaning = meaning;
+        this.sentences = new ArrayList<>();
+    }
 
     @JsonProperty(
             value = "id",

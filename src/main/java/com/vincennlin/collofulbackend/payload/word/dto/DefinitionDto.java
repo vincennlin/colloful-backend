@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -15,6 +16,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DefinitionDto {
+
+    public DefinitionDto(String wordName, String meaning, PartOfSpeech partOfSpeech) {
+        this.wordName = wordName;
+        this.meaning = meaning;
+        this.partOfSpeech = partOfSpeech;
+        this.collocations = new ArrayList<>();
+    }
 
     @JsonProperty(
             value = "id",

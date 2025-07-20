@@ -8,6 +8,8 @@ import com.vincennlin.collofulbackend.payload.word.dto.CollocationDto;
 import com.vincennlin.collofulbackend.payload.word.request.CreateCollocationsForDefinitionRequest;
 import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.payload.word.dto.SentenceDto;
+import com.vincennlin.collofulbackend.payload.word.request.GenerateCollocationsForDefinitionRequest;
+import com.vincennlin.collofulbackend.service.ai.AiService;
 import com.vincennlin.collofulbackend.service.word.CollocationService;
 import com.vincennlin.collofulbackend.service.word.DefinitionService;
 import com.vincennlin.collofulbackend.service.word.SentenceService;
@@ -29,6 +31,8 @@ public class DefinitionController {
     private final DefinitionService definitionService;
     private final CollocationService collocationService;
     private final SentenceService sentenceService;
+
+    private final AiService aiService;
 
     @GetMapping(value = "/words/{word_id}/definitions")
     public ResponseEntity<List<DefinitionDto>> getDefinitionsByWordId(@PathVariable(value = "word_id") Long wordId) {
@@ -80,6 +84,18 @@ public class DefinitionController {
         Definition savedDefinition = definitionService.saveDefinition(definition);
 
         return new ResponseEntity<>(definitionService.mapToDto(savedDefinition), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/definitions/{definition_id}/collocations/generate")
+    public ResponseEntity<DefinitionDto> generateCollocationsForDefinition(@PathVariable(value = "definition_id") Long definitionId) {
+
+        Definition definition = definitionService.getDefinitionEntityById(definitionId);
+
+        GenerateCollocationsForDefinitionRequest request = new GenerateCollocationsForDefinitionRequest(definition);
+
+        CreateCollocationsForDefinitionRequest createRequest = aiService.generateCollocationsForDefinition(request);
+
+        return createCollocationsForDefinition(createRequest, definitionId);
     }
 
     @PutMapping(value = "/definitions/{definition_id}")
