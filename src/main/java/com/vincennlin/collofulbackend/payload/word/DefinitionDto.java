@@ -2,7 +2,6 @@ package com.vincennlin.collofulbackend.payload.word;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vincennlin.collofulbackend.payload.word.partofspeech.SubPart;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,8 +31,8 @@ public class DefinitionDto {
     private String meaning;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty(value = "sub_part", required = true)
-    private SubPart subPart;
+    @JsonProperty(value = "part_of_speech", required = true)
+    private PartOfSpeech partOfSpeech;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value = "collocations")

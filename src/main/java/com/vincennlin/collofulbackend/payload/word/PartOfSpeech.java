@@ -1,15 +1,14 @@
-package com.vincennlin.collofulbackend.payload.word.partofspeech;
+package com.vincennlin.collofulbackend.payload.word;
 
 import lombok.Getter;
-
-import java.util.Set;
 
 @Getter
 public enum PartOfSpeech {
 
-    N("n.", "Noun", "名詞", SubPart.C, SubPart.U),
+    N("n.", "Noun", "名詞"),
     PRON("pron.", "Pronoun", "代名詞"),
-    V("v.", "Verb", "動詞", SubPart.VT, SubPart.VI),
+    VT("vt.", "Transitive Verb", "及物動詞"),
+    VI("vi.", "Intransitive Verb", "不及物動詞"),
     ADV("adv.", "Adverb", "副詞"),
     ADJ("adj.", "Adjective", "形容詞"),
     PREP("prep.", "Preposition", "介系詞"),
@@ -23,12 +22,10 @@ public enum PartOfSpeech {
     private final String abbreviation;
     private final String full;
     private final String chinese;
-    private final Set<SubPart> subParts;
 
-    PartOfSpeech(String abbreviation, String full, String chinese, SubPart... subParts) {
+    PartOfSpeech(String abbreviation, String full, String chinese) {
         this.abbreviation = abbreviation;
         this.full = full;
         this.chinese = chinese;
-        this.subParts = Set.of(subParts);
     }
 }

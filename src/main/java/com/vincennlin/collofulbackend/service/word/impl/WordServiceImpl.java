@@ -41,7 +41,7 @@ public class WordServiceImpl implements WordService {
     @Override
     public WordDto createWord(WordDto wordDto) {
 
-        Word word = new Word(userService.getCurrentUser(), wordDto.getName(), wordDto.getPartOfSpeech());
+        Word word = new Word(userService.getCurrentUser(), wordDto.getName());
 
         Word newWord = wordRepository.save(word);
 
@@ -54,7 +54,6 @@ public class WordServiceImpl implements WordService {
         Word word = getWordEntityById(wordId);
 
         word.setName(wordDto.getName());
-        word.setPartOfSpeech(wordDto.getPartOfSpeech());
 
         Word savedWord = wordRepository.save(word);
 

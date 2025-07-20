@@ -1,6 +1,6 @@
 package com.vincennlin.collofulbackend.entity.word;
 
-import com.vincennlin.collofulbackend.payload.word.partofspeech.SubPart;
+import com.vincennlin.collofulbackend.payload.word.PartOfSpeech;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +23,9 @@ import java.util.List;
 )
 public class Definition {
 
-    public Definition(String meaning, SubPart subPart, Word word) {
+    public Definition(String meaning, PartOfSpeech partOfSpeech, Word word) {
         this.meaning = meaning;
-        this.subPart = subPart;
+        this.partOfSpeech = partOfSpeech;
         this.word = word;
         this.collocation = new ArrayList<>();
     }
@@ -38,8 +38,8 @@ public class Definition {
     private String meaning;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "sub_part")
-    private SubPart subPart;
+    @Column(name = "part_of_speech", nullable = false)
+    private PartOfSpeech partOfSpeech;
 
     @ManyToOne(
             fetch = FetchType.LAZY,

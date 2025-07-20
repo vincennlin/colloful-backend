@@ -51,7 +51,7 @@ public class DefinitionServiceImpl implements DefinitionService {
     public DefinitionDto createDefinition(DefinitionDto definitionDto, Word word) {
 
         Definition definition = new Definition(
-                definitionDto.getMeaning(), definitionDto.getSubPart(), word);
+                definitionDto.getMeaning(), definitionDto.getPartOfSpeech(), word);
 
         Definition newDefinition = definitionRepository.save(definition);
 
@@ -64,7 +64,7 @@ public class DefinitionServiceImpl implements DefinitionService {
         Definition definition = getDefinitionEntityById(definitionId);
 
         definition.setMeaning(definitionDto.getMeaning());
-        definition.setSubPart(definitionDto.getSubPart());
+        definition.setPartOfSpeech(definitionDto.getPartOfSpeech());
 
         Definition savedDefinition = definitionRepository.save(definition);
 

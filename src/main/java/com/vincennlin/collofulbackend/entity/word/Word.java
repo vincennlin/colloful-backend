@@ -1,7 +1,6 @@
 package com.vincennlin.collofulbackend.entity.word;
 
 import com.vincennlin.collofulbackend.entity.user.User;
-import com.vincennlin.collofulbackend.payload.word.partofspeech.PartOfSpeech;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,13 +15,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "words")
+@Table(
+        name = "words",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "user_id"})
+)
 public class Word {
 
-    public Word(User user, String name, PartOfSpeech partOfSpeech) {
+    public Word(User user, String name) {
         this.user = user;
         this.name = name;
-        this.partOfSpeech = partOfSpeech;
         this.definitions = new ArrayList<>();
     }
 
@@ -39,10 +40,6 @@ public class Word {
 
     @Column(nullable = false, unique = true, length = 20)
     private String name;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "part_of_speech", nullable = false)
-    private PartOfSpeech partOfSpeech;
 
     @OneToMany(
             mappedBy = "word",
