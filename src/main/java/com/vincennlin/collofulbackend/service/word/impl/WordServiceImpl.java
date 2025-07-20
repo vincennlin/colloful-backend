@@ -5,11 +5,16 @@ import com.vincennlin.collofulbackend.exception.ResourceNotFoundException;
 import com.vincennlin.collofulbackend.exception.ResourceOwnershipException;
 import com.vincennlin.collofulbackend.mapper.word.WordMapper;
 import com.vincennlin.collofulbackend.payload.word.WordDto;
+import com.vincennlin.collofulbackend.payload.word.WordPageResponse;
 import com.vincennlin.collofulbackend.repository.word.WordRepository;
 import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.WordService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -20,6 +25,14 @@ public class WordServiceImpl implements WordService {
     private final UserService userService;
 
     private final WordRepository wordRepository;
+
+    @Override
+    public WordPageResponse getWords(Pageable pageable) {
+
+        Page<Word> pageOfWords = wordRepository.findAllByUserId(userService.getCurrentUserId(), pageable);
+
+        return getWordPageResponse(pageOfWords);
+    }
 
     @Override
     public WordDto getWordById(Long wordId) {
@@ -74,5 +87,24 @@ public class WordServiceImpl implements WordService {
         if (!currentUserId.equals(word.getUser().getId())) {
             throw new ResourceOwnershipException(currentUserId);
         }
+    }
+
+    private WordPageResponse getWordPageResponse(Page<Word> pageOfWords) {
+
+        List<Word> words = pageOfWords.getContent();
+
+        List<WordDto> wordDtoList = words.stream()
+                .map(wordMapper::mapToDto)
+                .toList();
+
+        WordPageResponse wordPageResponse = new WordPageResponse();
+        wordPageResponse.setContent(wordDtoList);
+        wordPageResponse.setPageNo(pageOfWords.getNumber());
+        wordPageResponse.setPageSize(pageOfWords.getSize());
+        wordPageResponse.setTotalElements(pageOfWords.getTotalElements());
+        wordPageResponse.setTotalPages(pageOfWords.getTotalPages());
+        wordPageResponse.setLast(pageOfWords.isLast());
+
+        return wordPageResponse;
     }
 }
