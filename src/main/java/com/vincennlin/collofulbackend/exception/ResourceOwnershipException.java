@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.FORBIDDEN)
 public class ResourceOwnershipException extends RuntimeException {
 
-    private Long userId;
-    private Long ownerId;
+    private final Long userId;
 
-    public ResourceOwnershipException(Long userId, Long ownerId) {
-        super(String.format("Current user with id: '%d' cannot access resource owned by user with id: '%s'", userId, ownerId));
+    public ResourceOwnershipException(Long userId) {
+        super(String.format("Current user with id: '%d' cannot access resource owned by other users", userId));
         this.userId = userId;
-        this.ownerId = ownerId;
     }
 }

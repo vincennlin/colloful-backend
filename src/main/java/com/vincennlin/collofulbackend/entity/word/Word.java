@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,6 +23,7 @@ public class Word {
         this.user = user;
         this.name = name;
         this.partOfSpeech = partOfSpeech;
+        this.definitions = new ArrayList<>();
     }
 
     @Id

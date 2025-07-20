@@ -1,6 +1,8 @@
 package com.vincennlin.collofulbackend.service.word.impl;
 
 import com.vincennlin.collofulbackend.entity.word.Word;
+import com.vincennlin.collofulbackend.exception.ResourceNotFoundException;
+import com.vincennlin.collofulbackend.exception.ResourceOwnershipException;
 import com.vincennlin.collofulbackend.mapper.word.WordMapper;
 import com.vincennlin.collofulbackend.payload.word.WordDto;
 import com.vincennlin.collofulbackend.repository.word.WordRepository;
@@ -21,7 +23,12 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public WordDto getWordById(Long wordId) {
-        return wordMapper.mapToDto(wordRepository.findById(wordId).orElse(null));
+
+        Word word = getWordEntityById(wordId);
+
+        checkWordOwnership(word);
+
+        return wordMapper.mapToDto(word);
     }
 
     @Override
@@ -36,11 +43,39 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public WordDto updateWord(Long wordId, WordDto wordDto) {
-        return null;
+
+        Word word = getWordEntityById(wordId);
+
+        checkWordOwnership(word);
+
+        word.setName(wordDto.getName());
+        word.setPartOfSpeech(wordDto.getPartOfSpeech());
+
+        Word savedWord = wordRepository.save(word);
+
+        return wordMapper.mapToDto(savedWord);
     }
 
     @Override
     public void deleteWordById(Long wordId) {
 
+        Word word = getWordEntityById(wordId);
+
+        checkWordOwnership(word);
+
+        wordRepository.delete(word);
+    }
+
+    private Word getWordEntityById(Long wordId) {
+        return wordRepository.findById(wordId)
+                .orElseThrow(() -> new ResourceNotFoundException("'Word'", "'Id'", wordId));
+    }
+
+    private void checkWordOwnership(Word word) {
+        Long currentUserId = userService.getCurrentUser().getId();
+
+        if (!currentUserId.equals(word.getUser().getId())) {
+            throw new ResourceOwnershipException(currentUserId);
+        }
     }
 }
