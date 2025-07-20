@@ -5,7 +5,7 @@ import com.vincennlin.collofulbackend.entity.word.Sentence;
 import com.vincennlin.collofulbackend.exception.ResourceNotFoundException;
 import com.vincennlin.collofulbackend.exception.ResourceOwnershipException;
 import com.vincennlin.collofulbackend.mapper.word.SentenceMapper;
-import com.vincennlin.collofulbackend.payload.word.SentenceDto;
+import com.vincennlin.collofulbackend.payload.word.dto.SentenceDto;
 import com.vincennlin.collofulbackend.repository.word.SentenceRepository;
 import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.SentenceService;

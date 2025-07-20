@@ -1,8 +1,8 @@
 package com.vincennlin.collofulbackend.service.word;
 
 import com.vincennlin.collofulbackend.entity.word.Word;
-import com.vincennlin.collofulbackend.payload.word.WordDto;
-import com.vincennlin.collofulbackend.payload.word.WordPageResponse;
+import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
+import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface WordService {

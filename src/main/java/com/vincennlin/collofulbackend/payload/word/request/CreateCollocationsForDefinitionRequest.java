@@ -1,5 +1,6 @@
-package com.vincennlin.collofulbackend.payload.word;
+package com.vincennlin.collofulbackend.payload.word.request;
 
+import com.vincennlin.collofulbackend.payload.word.dto.CollocationDto;
 import lombok.Data;
 
 import java.util.List;

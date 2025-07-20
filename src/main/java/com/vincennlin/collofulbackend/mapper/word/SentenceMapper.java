@@ -1,7 +1,7 @@
 package com.vincennlin.collofulbackend.mapper.word;
 
 import com.vincennlin.collofulbackend.entity.word.Sentence;
-import com.vincennlin.collofulbackend.payload.word.SentenceDto;
+import com.vincennlin.collofulbackend.payload.word.dto.SentenceDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

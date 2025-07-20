@@ -5,14 +5,13 @@ import com.vincennlin.collofulbackend.entity.word.Word;
 import com.vincennlin.collofulbackend.exception.ResourceNotFoundException;
 import com.vincennlin.collofulbackend.exception.ResourceOwnershipException;
 import com.vincennlin.collofulbackend.mapper.word.DefinitionMapper;
-import com.vincennlin.collofulbackend.payload.word.DefinitionDto;
+import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.repository.word.DefinitionRepository;
 import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.DefinitionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor

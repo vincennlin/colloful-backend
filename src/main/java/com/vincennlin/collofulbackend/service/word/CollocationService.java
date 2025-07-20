@@ -2,7 +2,7 @@ package com.vincennlin.collofulbackend.service.word;
 
 import com.vincennlin.collofulbackend.entity.word.Collocation;
 import com.vincennlin.collofulbackend.entity.word.Definition;
-import com.vincennlin.collofulbackend.payload.word.CollocationDto;
+import com.vincennlin.collofulbackend.payload.word.dto.CollocationDto;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
-package com.vincennlin.collofulbackend.payload.word;
+package com.vincennlin.collofulbackend.payload.word.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import lombok.Data;
 
 import java.util.List;

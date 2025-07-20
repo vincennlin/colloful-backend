@@ -1,4 +1,4 @@
-package com.vincennlin.collofulbackend.payload.word;
+package com.vincennlin.collofulbackend.payload.word.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

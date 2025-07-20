@@ -5,7 +5,14 @@ import com.vincennlin.collofulbackend.entity.word.Definition;
 import com.vincennlin.collofulbackend.entity.word.Sentence;
 import com.vincennlin.collofulbackend.entity.word.Word;
 import com.vincennlin.collofulbackend.payload.constants.PageConstants;
-import com.vincennlin.collofulbackend.payload.word.*;
+import com.vincennlin.collofulbackend.payload.word.dto.CollocationDto;
+import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
+import com.vincennlin.collofulbackend.payload.word.dto.SentenceDto;
+import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
+import com.vincennlin.collofulbackend.payload.word.request.CreateWordWithDetailRequest;
+import com.vincennlin.collofulbackend.payload.word.request.GenerateRequest;
+import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
+import com.vincennlin.collofulbackend.service.ai.AiService;
 import com.vincennlin.collofulbackend.service.word.CollocationService;
 import com.vincennlin.collofulbackend.service.word.DefinitionService;
 import com.vincennlin.collofulbackend.service.word.SentenceService;
@@ -30,6 +37,7 @@ public class WordController {
     private final DefinitionService definitionService;
     private final CollocationService collocationService;
     private final SentenceService sentenceService;
+    private final AiService aiService;
 
     @GetMapping
     public ResponseEntity<WordPageResponse> getWords(
@@ -107,6 +115,14 @@ public class WordController {
         wordService.deleteWordById(wordId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping(value = {"/ai/generate"})
+    public ResponseEntity<String> generate(@RequestBody GenerateRequest request) {
+
+        String response = aiService.generateResponse(request.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private Pageable getPageable(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {

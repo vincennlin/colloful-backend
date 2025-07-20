@@ -1,5 +1,6 @@
-package com.vincennlin.collofulbackend.payload.word;
+package com.vincennlin.collofulbackend.payload.word.response;
 
+import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

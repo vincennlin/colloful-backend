@@ -5,7 +5,7 @@ import com.vincennlin.collofulbackend.entity.word.Definition;
 import com.vincennlin.collofulbackend.exception.ResourceNotFoundException;
 import com.vincennlin.collofulbackend.exception.ResourceOwnershipException;
 import com.vincennlin.collofulbackend.mapper.word.CollocationMapper;
-import com.vincennlin.collofulbackend.payload.word.CollocationDto;
+import com.vincennlin.collofulbackend.payload.word.dto.CollocationDto;
 import com.vincennlin.collofulbackend.repository.word.CollocationRepository;
 import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.CollocationService;

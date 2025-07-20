@@ -2,7 +2,7 @@ package com.vincennlin.collofulbackend.controller;
 
 
 import com.vincennlin.collofulbackend.entity.word.Collocation;
-import com.vincennlin.collofulbackend.payload.word.SentenceDto;
+import com.vincennlin.collofulbackend.payload.word.dto.SentenceDto;
 import com.vincennlin.collofulbackend.service.word.CollocationService;
 import com.vincennlin.collofulbackend.service.word.SentenceService;
 import jakarta.validation.Valid;
