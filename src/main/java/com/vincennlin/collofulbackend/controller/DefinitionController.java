@@ -1,8 +1,16 @@
 package com.vincennlin.collofulbackend.controller;
 
+import com.vincennlin.collofulbackend.entity.word.Collocation;
+import com.vincennlin.collofulbackend.entity.word.Definition;
+import com.vincennlin.collofulbackend.entity.word.Sentence;
 import com.vincennlin.collofulbackend.entity.word.Word;
+import com.vincennlin.collofulbackend.payload.word.CollocationDto;
+import com.vincennlin.collofulbackend.payload.word.CreateCollocationsForDefinitionRequest;
 import com.vincennlin.collofulbackend.payload.word.DefinitionDto;
+import com.vincennlin.collofulbackend.payload.word.SentenceDto;
+import com.vincennlin.collofulbackend.service.word.CollocationService;
 import com.vincennlin.collofulbackend.service.word.DefinitionService;
+import com.vincennlin.collofulbackend.service.word.SentenceService;
 import com.vincennlin.collofulbackend.service.word.WordService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +27,8 @@ public class DefinitionController {
 
     private final WordService wordService;
     private final DefinitionService definitionService;
+    private final CollocationService collocationService;
+    private final SentenceService sentenceService;
 
     @GetMapping(value = "/words/{word_id}/definitions")
     public ResponseEntity<List<DefinitionDto>> getDefinitionsByWordId(@PathVariable(value = "word_id") Long wordId) {
@@ -47,6 +57,29 @@ public class DefinitionController {
         DefinitionDto responseDefinitionDto = definitionService.createDefinition(definitionDto, word);
 
         return new ResponseEntity<>(responseDefinitionDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/definitions/{definition_id}/collocations/bulk")
+    public ResponseEntity<DefinitionDto> createCollocationsForDefinition(@Valid @RequestBody CreateCollocationsForDefinitionRequest request,
+                                                                         @PathVariable(value = "definition_id") Long definitionId) {
+
+        Definition definition = definitionService.getDefinitionEntityById(definitionId);
+
+        for (CollocationDto collocationDto : request.getCollocations()) {
+            Collocation collocation = collocationService.createCollocationAndGetEntity(collocationDto, definition);
+
+            for (SentenceDto sentenceDto : collocationDto.getSentences()) {
+                Sentence savedSentence = sentenceService.createSentenceAndGetEntity(sentenceDto, collocation);
+                collocation.getSentences().add(savedSentence);
+            }
+
+            Collocation savedCollocation = collocationService.saveCollocation(collocation);
+            definition.getCollocations().add(savedCollocation);
+        }
+
+        Definition savedDefinition = definitionService.saveDefinition(definition);
+
+        return new ResponseEntity<>(definitionService.mapToDto(savedDefinition), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/definitions/{definition_id}")

@@ -92,6 +92,11 @@ public class DefinitionServiceImpl implements DefinitionService {
         return definitionRepository.save(definition);
     }
 
+    @Override
+    public DefinitionDto mapToDto(Definition definition) {
+        return definitionMapper.mapToDto(definition);
+    }
+
     private void checkDefinitionOwnership(Definition definition) {
         Long currentUserId = userService.getCurrentUser().getId();
 

@@ -23,4 +23,6 @@ public interface DefinitionService {
     void deleteDefinitionById(Long definitionId);
 
     Definition saveDefinition(Definition definition);
+
+    DefinitionDto mapToDto(Definition definition);
 }
