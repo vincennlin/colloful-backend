@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -34,6 +36,27 @@ public class WordDto {
     @JsonProperty(value = "name", required = true)
     @NotEmpty
     private String name;
+
+    @JsonProperty()
+    private boolean important;
+
+    @JsonProperty()
+    private boolean mistaken;
+
+    @JsonProperty(value = "review_today")
+    private boolean reviewToday;
+
+    @JsonProperty(
+            value = "date_created",
+            access = JsonProperty.Access.READ_ONLY
+    )
+    private LocalDateTime dateCreated;
+
+    @JsonProperty(
+            value = "last_updated",
+            access = JsonProperty.Access.READ_ONLY
+    )
+    private LocalDateTime lastUpdated;
 
     @JsonProperty(value = "definitions")
     private List<DefinitionDto> definitions;

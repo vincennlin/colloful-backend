@@ -3,6 +3,7 @@ package com.vincennlin.collofulbackend.service.word;
 import com.vincennlin.collofulbackend.entity.word.Word;
 import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
+import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -25,6 +26,8 @@ public interface WordService {
     WordDto updateWord(Long wordId, WordDto wordDto);
 
     WordDto updateWordWithDetail(Long wordId, String wordName, List<DefinitionDto> definitionDtoList);
+
+    WordDto updateWordMark(Long wordId, WordMarkDto wordMarkDto);
 
     void deleteWordById(Long wordId);
 

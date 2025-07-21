@@ -8,7 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +45,23 @@ public class Word {
 
     @Column(nullable = false, unique = true, length = 20)
     private String name;
+
+    @Column(name = "important")
+    private boolean important;
+
+    @Column(name = "mistaken")
+    private boolean mistaken;
+
+    @Column(name = "review_today")
+    private boolean reviewToday;
+
+    @CreationTimestamp
+    @Column(name = "date_created")
+    private LocalDateTime dateCreated;
+
+    @UpdateTimestamp
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
 
     @OneToMany(
             mappedBy = "word",

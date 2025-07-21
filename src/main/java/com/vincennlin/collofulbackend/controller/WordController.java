@@ -2,6 +2,7 @@ package com.vincennlin.collofulbackend.controller;
 
 import com.vincennlin.collofulbackend.payload.constants.PageConstants;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
+import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
 import com.vincennlin.collofulbackend.payload.word.request.CreateWordWithDetailRequest;
 import com.vincennlin.collofulbackend.payload.word.request.GenerateRequest;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
@@ -74,12 +75,20 @@ public class WordController {
         return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
     }
 
-    @Transactional
     @PutMapping(value = {"/{word_id}/details"})
     public ResponseEntity<WordDto> updateWordWithDetails(@Valid @RequestBody CreateWordWithDetailRequest request,
                                                          @PathVariable(value = "word_id") Long wordId) {
 
         WordDto responseWordDto = wordService.updateWordWithDetail(wordId, request.getName(), request.getDefinitions());
+
+        return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
+    }
+
+    @PutMapping(value = {"/{word_id}/mark"})
+    public ResponseEntity<WordDto> updateWordMark(@Valid @RequestBody WordMarkDto wordMarkDto,
+                                                  @PathVariable(value = "word_id") Long wordId) {
+
+        WordDto responseWordDto = wordService.updateWordMark(wordId, wordMarkDto);
 
         return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
     }

@@ -8,6 +8,7 @@ import com.vincennlin.collofulbackend.exception.ResourceOwnershipException;
 import com.vincennlin.collofulbackend.mapper.word.WordMapper;
 import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
+import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import com.vincennlin.collofulbackend.repository.word.WordRepository;
 import com.vincennlin.collofulbackend.service.user.UserService;
@@ -104,6 +105,9 @@ public class WordServiceImpl implements WordService {
         Word word = getWordEntityById(wordId);
 
         word.setName(wordDto.getName());
+        word.setImportant(wordDto.isImportant());
+        word.setMistaken(wordDto.isMistaken());
+        word.setReviewToday(wordDto.isReviewToday());
 
         if (wordDto.getDefinitions() != null) {
             int size = wordDto.getDefinitions().size();
@@ -137,6 +141,19 @@ public class WordServiceImpl implements WordService {
         wordDto.setDefinitions(definitionDtoList);
 
         return updateWord(wordId, wordDto);
+    }
+
+    @Transactional
+    @Override
+    public WordDto updateWordMark(Long wordId, WordMarkDto wordMarkDto) {
+
+        Word word = getWordEntityById(wordId);
+
+        word.setImportant(wordMarkDto.isImportant());
+        word.setMistaken(wordMarkDto.isMistaken());
+        word.setReviewToday(wordMarkDto.isReviewToday());
+
+        return wordMapper.mapToDto(wordRepository.save(word));
     }
 
     @Transactional
