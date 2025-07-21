@@ -57,9 +57,19 @@ public class SentenceServiceImpl implements SentenceService {
     @Override
     public Sentence createSentenceAndGetEntity(SentenceDto sentenceDto, Collocation collocation) {
 
-        Sentence sentence = new Sentence(sentenceDto.getContent(), sentenceDto.getTranslation(),  collocation);
+        Sentence sentence = mapToEntity(sentenceDto, collocation);
 
         return sentenceRepository.save(sentence);
+    }
+
+    @Override
+    public List<Sentence> createSentencesAndGetEntityList(List<SentenceDto> sentenceDtoList, Collocation collocation) {
+
+        List<Sentence> sentences = sentenceDtoList.stream()
+                .map(sentenceDto -> mapToEntity(sentenceDto, collocation))
+                .toList();
+
+        return sentenceRepository.saveAll(sentences);
     }
 
     @Transactional
@@ -73,11 +83,9 @@ public class SentenceServiceImpl implements SentenceService {
     @Override
     public Sentence updateSentenceAndGetEntity(Long sentenceId, SentenceDto sentenceDto) {
 
-        Sentence sentence = getSentenceEntityById(sentenceId);
+        checkSentenceDtoArguments(sentenceDto);
 
-        if (sentenceDto.getContent() == null || sentenceDto.getContent().isBlank()) {
-            throw new IllegalArgumentException("Content must not be null or empty");
-        }
+        Sentence sentence = getSentenceEntityById(sentenceId);
 
         sentence.setContent(sentenceDto.getContent());
         sentence.setTranslation(sentenceDto.getTranslation());
@@ -103,5 +111,18 @@ public class SentenceServiceImpl implements SentenceService {
         if (!currentUserId.equals(sentence.getUserId())) {
             throw new ResourceOwnershipException(currentUserId);
         }
+    }
+
+    private void checkSentenceDtoArguments(SentenceDto sentenceDto) {
+        if (sentenceDto.getContent() == null || sentenceDto.getContent().isBlank()) {
+            throw new IllegalArgumentException("Content must not be null or empty");
+        }
+    }
+
+    private Sentence mapToEntity(SentenceDto sentenceDto, Collocation collocation) {
+
+        checkSentenceDtoArguments(sentenceDto);
+
+        return new Sentence(sentenceDto.getContent(), sentenceDto.getTranslation(), collocation);
     }
 }

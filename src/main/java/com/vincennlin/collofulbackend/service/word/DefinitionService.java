@@ -18,6 +18,8 @@ public interface DefinitionService {
 
     Definition createDefinitionAndGetEntity(DefinitionDto definitionDto, Word word);
 
+    List<Definition> createDefinitionsForWord(List<DefinitionDto> definitionDtoList, Word word);
+
     DefinitionDto updateDefinition(Long definitionId, DefinitionDto definitionDto);
 
     Definition updateDefinitionAndGetEntity(Long definitionId, DefinitionDto definitionDto);

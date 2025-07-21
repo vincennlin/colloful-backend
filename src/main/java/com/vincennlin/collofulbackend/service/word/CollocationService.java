@@ -18,6 +18,8 @@ public interface CollocationService {
 
     Collocation createCollocationAndGetEntity(CollocationDto collocationDto, Definition definition);
 
+    List<Collocation> createCollocationsForDefinition(List<CollocationDto> collocationDtoList, Definition definition);
+
     CollocationDto updateCollocation(Long collocationId, CollocationDto collocationDto);
 
     Collocation updateCollocationAndGetEntity(Long collocationId, CollocationDto collocationDto);

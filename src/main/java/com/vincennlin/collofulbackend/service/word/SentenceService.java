@@ -18,6 +18,8 @@ public interface SentenceService {
 
     Sentence createSentenceAndGetEntity(SentenceDto sentenceDto, Collocation collocation);
 
+    List<Sentence> createSentencesAndGetEntityList(List<SentenceDto> sentenceDtoList, Collocation collocation);
+
     SentenceDto updateSentence(Long sentenceId, SentenceDto sentenceDto);
 
     Sentence updateSentenceAndGetEntity(Long sentenceId, SentenceDto sentenceDto);
