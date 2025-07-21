@@ -1,6 +1,8 @@
 package com.vincennlin.collofulbackend.entity.word;
 
+import com.vincennlin.collofulbackend.entity.review.ReviewInfo;
 import com.vincennlin.collofulbackend.entity.user.User;
+import com.vincennlin.collofulbackend.payload.review.ReviewOption;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,4 +49,14 @@ public class Word {
             cascade = CascadeType.ALL
     )
     private List<Definition> definitions;
+
+    @OneToOne(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    private ReviewInfo reviewInfo;
+
+    public void review(ReviewOption option) {
+        this.reviewInfo.review(option);
+    }
 }

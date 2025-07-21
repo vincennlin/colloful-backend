@@ -1,5 +1,6 @@
 package com.vincennlin.collofulbackend.service.word.impl;
 
+import com.vincennlin.collofulbackend.entity.review.ReviewInfo;
 import com.vincennlin.collofulbackend.entity.word.Definition;
 import com.vincennlin.collofulbackend.entity.word.Word;
 import com.vincennlin.collofulbackend.exception.ResourceNotFoundException;
@@ -70,13 +71,19 @@ public class WordServiceImpl implements WordService {
 
         Word word = new Word(userService.getCurrentUser(), wordDto.getName());
 
+        ReviewInfo reviewInfo = new ReviewInfo();
+
+        reviewInfo.setWord(word);
+        word.setReviewInfo(reviewInfo);
+
         return wordRepository.save(word);
     }
 
+    @Transactional
     @Override
     public WordDto createWordWithDetail(String wordName, List<DefinitionDto> definitionDtoList) {
 
-        Word newWord = wordRepository.save(mapToEntity(new WordDto(wordName)));
+        Word newWord = wordRepository.save(createWordAndGetEntity(new WordDto(wordName)));
 
         if (definitionDtoList.isEmpty()) {
             return mapToDto(newWord);
