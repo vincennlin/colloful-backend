@@ -68,10 +68,11 @@ public class AiServiceImpl implements AiService {
     private Message getInitialSystemMessage(List<DefinitionCollocationExample> examples) {
 
         StringBuilder message = new StringBuilder("你的任務是根據收到的單字定義，生成與該單字相關的搭配詞。\\n" +
-                "你會收到一個英文單字的名稱、含義和詞性，請根據這些資訊生成搭配詞。\\n" +
+                "你會收到一個英文單字的名稱、詞性與定義，請根據這些資訊生成搭配詞。\\n" +
+                "每個單字請生成一至三個搭配詞。\\n" +
                 "每個搭配詞應包含其含義和至少一個例句。\\n" +
-                "請確保搭配詞的含義和例句與單字的定義相關聯。\\n" +
-                "每個單字請生成一至三個搭配詞。\\n");
+                "請注意，請確保「搭配詞的含義與單字的詞性與定義」相關聯，這是最重要的要求。" +
+                "請勿生成非指定詞性的單字的搭配詞，例如若是及物動詞，請不要生成該單字的名詞或非及物動詞的搭配詞。\\n");
 
         message.append("以下是範例的輸入和輸出：");
 
@@ -163,11 +164,15 @@ public class AiServiceImpl implements AiService {
     }
 
     private String getRequestString(GenerateCollocationsForDefinitionRequest request) {
-        try {
-            return objectMapper.writeValueAsString(request);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to convert request to JSON: " + e.getMessage(), e);
-        }
+//        try {
+//            return objectMapper.writeValueAsString(request);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to convert request to JSON: " + e.getMessage(), e);
+//        }
+
+        return "單字名稱：" + request.getWordName() + "\n" +
+                "詞性：" + request.getPartOfSpeech().getChinese() + "\n" +
+                "中文含義：" + request.getMeaning() + "\n";
     }
 
     private String preProcessJson(String json) {
