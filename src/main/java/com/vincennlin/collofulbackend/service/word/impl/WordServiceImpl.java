@@ -45,7 +45,15 @@ public class WordServiceImpl implements WordService {
     @Override
     public WordDto getWordById(Long wordId) {
 
-        return wordMapper.mapToDto(getWordEntityById(wordId));
+        Word word = getWordEntityById(wordId);
+
+        WordDto wordDto = wordMapper.mapToDto(word);
+        wordDto.setReviewLevel(word.getReviewInfo().getReviewLevel());
+        wordDto.setReviewInterval(word.getReviewInfo().getReviewInterval());
+        wordDto.setLastReviewed(word.getReviewInfo().getLastReviewed());
+        wordDto.setNextReview(word.getReviewInfo().getNextReview());
+
+        return wordDto;
     }
 
     @Override

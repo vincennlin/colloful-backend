@@ -1,5 +1,6 @@
 package com.vincennlin.collofulbackend.payload.word.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,6 +57,34 @@ public class WordDto {
             access = JsonProperty.Access.READ_ONLY
     )
     private LocalDateTime lastUpdated;
+
+    @JsonProperty(
+            value = "review_level",
+            access = JsonProperty.Access.READ_ONLY
+    )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer reviewLevel;
+
+    @JsonProperty(
+            value = "review_interval",
+            access = JsonProperty.Access.READ_ONLY
+    )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer reviewInterval;
+
+    @JsonProperty(
+            value = "last_reviewed",
+            access = JsonProperty.Access.READ_ONLY
+    )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDateTime lastReviewed;
+
+    @JsonProperty(
+            value = "next_review",
+            access = JsonProperty.Access.READ_ONLY
+    )
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDateTime nextReview;
 
     @JsonProperty(value = "definitions")
     private List<DefinitionDto> definitions;
