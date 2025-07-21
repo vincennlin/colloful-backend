@@ -145,15 +145,23 @@ public class WordServiceImpl implements WordService {
 
     @Transactional
     @Override
-    public WordDto updateWordMark(Long wordId, WordMarkDto wordMarkDto) {
+    public void updateWordMark(Long wordId, WordMarkDto wordMarkDto) {
 
         Word word = getWordEntityById(wordId);
 
-        word.setImportant(wordMarkDto.isImportant());
-        word.setMistaken(wordMarkDto.isMistaken());
-        word.setReviewToday(wordMarkDto.isReviewToday());
+        if (wordMarkDto.getImportant() != null) {
+            word.setImportant(wordMarkDto.getImportant());
+        }
+        if (wordMarkDto.getMistaken() != null) {
+            word.setMistaken(wordMarkDto.getMistaken());
+        }
+        if (wordMarkDto.getReviewToday() != null) {
+            word.setReviewToday(wordMarkDto.getReviewToday());
+        }
 
-        return wordMapper.mapToDto(wordRepository.save(word));
+        wordRepository.save(word);
+
+//        return wordMapper.mapToDto(wordRepository.save(word));
     }
 
     @Transactional

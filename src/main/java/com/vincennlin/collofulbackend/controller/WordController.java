@@ -84,13 +84,13 @@ public class WordController {
         return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
     }
 
-    @PutMapping(value = {"/{word_id}/mark"})
-    public ResponseEntity<WordDto> updateWordMark(@Valid @RequestBody WordMarkDto wordMarkDto,
+    @PatchMapping(value = {"/{word_id}/mark"})
+    public ResponseEntity<Void> updateWordMark(@Valid @RequestBody WordMarkDto wordMarkDto,
                                                   @PathVariable(value = "word_id") Long wordId) {
 
-        WordDto responseWordDto = wordService.updateWordMark(wordId, wordMarkDto);
+        wordService.updateWordMark(wordId, wordMarkDto);
 
-        return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(value = {"/{word_id}"})

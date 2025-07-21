@@ -12,10 +12,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class WordMarkDto {
 
-    private boolean important;
+    @JsonProperty(required = false)
+    private Boolean important;
 
-    private boolean mistaken;
+    @JsonProperty(required = false)
+    private Boolean mistaken;
 
-    @JsonProperty(value = "review_today")
-    private boolean reviewToday;
+    @JsonProperty(value = "review_today", required = false)
+    private Boolean reviewToday;
 }

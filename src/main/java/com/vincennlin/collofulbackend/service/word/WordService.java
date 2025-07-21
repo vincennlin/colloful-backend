@@ -27,7 +27,7 @@ public interface WordService {
 
     WordDto updateWordWithDetail(Long wordId, String wordName, List<DefinitionDto> definitionDtoList);
 
-    WordDto updateWordMark(Long wordId, WordMarkDto wordMarkDto);
+    void updateWordMark(Long wordId, WordMarkDto wordMarkDto);
 
     void deleteWordById(Long wordId);
 
