@@ -1,12 +1,16 @@
 package com.vincennlin.collofulbackend.controller;
 
 import com.vincennlin.collofulbackend.payload.constants.PageConstants;
+import com.vincennlin.collofulbackend.payload.review.ReviewRequest;
+import com.vincennlin.collofulbackend.payload.review.dto.ReviewInfoDto;
+import com.vincennlin.collofulbackend.payload.review.dto.ReviewStateDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
 import com.vincennlin.collofulbackend.payload.word.request.CreateWordWithDetailRequest;
 import com.vincennlin.collofulbackend.payload.word.request.GenerateRequest;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import com.vincennlin.collofulbackend.service.ai.AiService;
+import com.vincennlin.collofulbackend.service.review.ReviewService;
 import com.vincennlin.collofulbackend.service.word.WordService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -17,8 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class WordController {
 
     private final WordService wordService;
+    private final ReviewService reviewService;
     private final AiService aiService;
 
     @GetMapping
@@ -40,6 +46,28 @@ public class WordController {
         WordPageResponse wordPageResponse = wordService.getWords(pageable);
 
         return new ResponseEntity<>(wordPageResponse, HttpStatus.OK);
+    }
+
+    @GetMapping(value = {"/review"})
+    public ResponseEntity<WordPageResponse> getWordsToReview(
+            @RequestParam(name = "pageNo", defaultValue = PageConstants.DEFAULT_PAGE_NUMBER, required = false) @Min(0) Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = PageConstants.DEFAULT_PAGE_SIZE, required = false) @Max(100) @Min(1) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = PageConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = PageConstants.DEFAULT_SORT_DIR, required = false) String sortDir) {
+
+        Pageable pageable = getPageable(pageNo, pageSize, sortBy, sortDir);
+
+        WordPageResponse wordPageResponse = reviewService.getWordsToReview(pageable);
+
+        return new ResponseEntity<>(wordPageResponse, HttpStatus.OK);
+    }
+
+    @GetMapping(value = {"/review/{word_id}/history"})
+    public ResponseEntity<List<ReviewStateDto>> getReviewHistoryByWordId(@PathVariable(value = "word_id") Long wordId) {
+
+        List<ReviewStateDto> reviewHistory = reviewService.getReviewStatesByWordId(wordId);
+
+        return new ResponseEntity<>(reviewHistory, HttpStatus.OK);
     }
 
     @GetMapping(value = {"/{word_id}"})
@@ -91,6 +119,23 @@ public class WordController {
         wordService.updateWordMark(wordId, wordMarkDto);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping(value = {"/{word_id}/review"})
+    public ResponseEntity<WordDto> reviewWord(@Valid @RequestBody ReviewRequest request,
+                                                    @PathVariable(value = "word_id") Long wordId) {
+
+        WordDto wordDto = reviewService.reviewWord(wordId, request);
+
+        return new ResponseEntity<>(wordDto, HttpStatus.OK);
+    }
+
+    @PostMapping(value = {"/{word_id}/review/undo"})
+    public ResponseEntity<WordDto> undoReviewWord(@PathVariable(value = "word_id") Long wordId) {
+
+        WordDto wordDto = reviewService.undoReviewWord(wordId);
+
+        return new ResponseEntity<>(wordDto, HttpStatus.OK);
     }
 
     @DeleteMapping(value = {"/{word_id}"})

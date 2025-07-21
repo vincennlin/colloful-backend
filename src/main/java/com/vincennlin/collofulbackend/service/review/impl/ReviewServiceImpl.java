@@ -7,12 +7,15 @@ import com.vincennlin.collofulbackend.exception.WebAPIException;
 import com.vincennlin.collofulbackend.payload.review.ReviewRequest;
 import com.vincennlin.collofulbackend.payload.review.dto.ReviewStateDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
+import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import com.vincennlin.collofulbackend.repository.review.ReviewInfoRepository;
 import com.vincennlin.collofulbackend.service.review.ReviewService;
 import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.WordService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +33,13 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewInfoRepository reviewInfoRepository;
 
     @Override
-    public List<WordDto> getWordsToReview() {
+    public WordPageResponse getWordsToReview(Pageable pageable) {
 
         Long userId = userService.getCurrentUserId();
 
-        List<Word> dueWords = reviewInfoRepository.findDueWordsByUserId(userId);
+        Page<Word> pageOfWords = reviewInfoRepository.findDueWordsByUserId(userId, pageable);
 
-        return dueWords.stream().map(wordService::mapToDto).toList();
+        return wordService.getWordPageResponse(pageOfWords);
     }
 
     @Override

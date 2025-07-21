@@ -5,6 +5,7 @@ import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -34,4 +35,6 @@ public interface WordService {
     Word saveWord(Word word);
 
     WordDto mapToDto(Word word);
+
+    WordPageResponse getWordPageResponse(Page<Word> pageOfWords);
 }

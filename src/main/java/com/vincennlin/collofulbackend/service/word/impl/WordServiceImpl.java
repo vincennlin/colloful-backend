@@ -192,6 +192,26 @@ public class WordServiceImpl implements WordService {
         return wordMapper.mapToDto(word);
     }
 
+    @Override
+    public WordPageResponse getWordPageResponse(Page<Word> pageOfWords) {
+
+        List<Word> words = pageOfWords.getContent();
+
+        List<WordDto> wordDtoList = words.stream()
+                .map(wordMapper::mapToDto)
+                .toList();
+
+        WordPageResponse wordPageResponse = new WordPageResponse();
+        wordPageResponse.setContent(wordDtoList);
+        wordPageResponse.setPageNo(pageOfWords.getNumber());
+        wordPageResponse.setPageSize(pageOfWords.getSize());
+        wordPageResponse.setTotalElements(pageOfWords.getTotalElements());
+        wordPageResponse.setTotalPages(pageOfWords.getTotalPages());
+        wordPageResponse.setLast(pageOfWords.isLast());
+
+        return wordPageResponse;
+    }
+
     private void checkWordOwnership(Word word) {
         Long currentUserId = userService.getCurrentUser().getId();
 
@@ -211,24 +231,5 @@ public class WordServiceImpl implements WordService {
         checkWordDtoArguments(wordDto);
 
         return new Word(userService.getCurrentUser(), wordDto.getName());
-    }
-
-    private WordPageResponse getWordPageResponse(Page<Word> pageOfWords) {
-
-        List<Word> words = pageOfWords.getContent();
-
-        List<WordDto> wordDtoList = words.stream()
-                .map(wordMapper::mapToDto)
-                .toList();
-
-        WordPageResponse wordPageResponse = new WordPageResponse();
-        wordPageResponse.setContent(wordDtoList);
-        wordPageResponse.setPageNo(pageOfWords.getNumber());
-        wordPageResponse.setPageSize(pageOfWords.getSize());
-        wordPageResponse.setTotalElements(pageOfWords.getTotalElements());
-        wordPageResponse.setTotalPages(pageOfWords.getTotalPages());
-        wordPageResponse.setLast(pageOfWords.isLast());
-
-        return wordPageResponse;
     }
 }
