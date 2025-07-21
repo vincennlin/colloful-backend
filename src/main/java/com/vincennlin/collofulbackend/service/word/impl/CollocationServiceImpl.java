@@ -11,6 +11,7 @@ import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.CollocationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,12 +49,14 @@ public class CollocationServiceImpl implements CollocationService {
         return collocation;
     }
 
+    @Transactional
     @Override
     public CollocationDto createCollocation(CollocationDto collocationDto, Definition definition) {
 
         return collocationMapper.mapToDto(createCollocationAndGetEntity(collocationDto, definition));
     }
 
+    @Transactional
     @Override
     public Collocation createCollocationAndGetEntity(CollocationDto collocationDto, Definition definition) {
 
@@ -62,19 +65,30 @@ public class CollocationServiceImpl implements CollocationService {
         return collocationRepository.save(collocation);
     }
 
+    @Transactional
     @Override
     public CollocationDto updateCollocation(Long CollocationId, CollocationDto collocationDto) {
 
-        Collocation collocation = getCollocationEntityById(CollocationId);
+        return collocationMapper.mapToDto(updateCollocationAndGetEntity(CollocationId, collocationDto));
+    }
+
+    @Transactional
+    @Override
+    public Collocation updateCollocationAndGetEntity(Long collocationId, CollocationDto collocationDto) {
+
+        Collocation collocation = getCollocationEntityById(collocationId);
+
+        if (collocationDto.getContent() == null || collocationDto.getContent().isBlank()) {
+            throw new IllegalArgumentException("Collocation content cannot be null or empty");
+        }
 
         collocation.setContent(collocationDto.getContent());
         collocation.setMeaning(collocationDto.getMeaning());
 
-        Collocation savedCollocation = collocationRepository.save(collocation);
-
-        return collocationMapper.mapToDto(savedCollocation);
+        return collocationRepository.save(collocation);
     }
 
+    @Transactional
     @Override
     public void deleteCollocationById(Long collocationId) {
 
@@ -86,6 +100,7 @@ public class CollocationServiceImpl implements CollocationService {
         collocationRepository.delete(collocation);
     }
 
+    @Transactional
     @Override
     public Collocation saveCollocation(Collocation collocation) {
         return collocationRepository.save(collocation);

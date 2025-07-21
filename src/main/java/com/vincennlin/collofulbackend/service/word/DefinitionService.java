@@ -20,6 +20,8 @@ public interface DefinitionService {
 
     DefinitionDto updateDefinition(Long definitionId, DefinitionDto definitionDto);
 
+    Definition updateDefinitionAndGetEntity(Long definitionId, DefinitionDto definitionDto);
+
     void deleteDefinitionById(Long definitionId);
 
     Definition saveDefinition(Definition definition);

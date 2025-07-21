@@ -11,6 +11,7 @@ import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.SentenceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,12 +46,14 @@ public class SentenceServiceImpl implements SentenceService {
         return sentence;
     }
 
+    @Transactional
     @Override
     public SentenceDto createSentence(SentenceDto sentenceDto, Collocation collocation) {
 
         return sentenceMapper.mapToDto(createSentenceAndGetEntity(sentenceDto, collocation));
     }
 
+    @Transactional
     @Override
     public Sentence createSentenceAndGetEntity(SentenceDto sentenceDto, Collocation collocation) {
 
@@ -59,19 +62,30 @@ public class SentenceServiceImpl implements SentenceService {
         return sentenceRepository.save(sentence);
     }
 
+    @Transactional
     @Override
     public SentenceDto updateSentence(Long sentenceId, SentenceDto sentenceDto) {
 
+        return sentenceMapper.mapToDto(updateSentenceAndGetEntity(sentenceId, sentenceDto));
+    }
+
+    @Transactional
+    @Override
+    public Sentence updateSentenceAndGetEntity(Long sentenceId, SentenceDto sentenceDto) {
+
         Sentence sentence = getSentenceEntityById(sentenceId);
+
+        if (sentenceDto.getContent() == null || sentenceDto.getContent().isBlank()) {
+            throw new IllegalArgumentException("Content must not be null or empty");
+        }
 
         sentence.setContent(sentenceDto.getContent());
         sentence.setTranslation(sentenceDto.getTranslation());
 
-        Sentence savedSentence = sentenceRepository.save(sentence);
-
-        return sentenceMapper.mapToDto(savedSentence);
+        return sentenceRepository.save(sentence);
     }
 
+    @Transactional
     @Override
     public void deleteSentenceById(Long sentenceId) {
 

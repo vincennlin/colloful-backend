@@ -4,6 +4,8 @@ import com.vincennlin.collofulbackend.entity.word.Collocation;
 import com.vincennlin.collofulbackend.entity.word.Definition;
 import com.vincennlin.collofulbackend.entity.word.Sentence;
 import com.vincennlin.collofulbackend.entity.word.Word;
+import com.vincennlin.collofulbackend.exception.ResourceRelationException;
+import com.vincennlin.collofulbackend.exception.WebAPIException;
 import com.vincennlin.collofulbackend.payload.constants.PageConstants;
 import com.vincennlin.collofulbackend.payload.word.dto.CollocationDto;
 import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
@@ -26,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -105,6 +108,51 @@ public class WordController {
                                               @PathVariable(value = "word_id") Long wordId) {
 
         WordDto responseWordDto = wordService.updateWord(wordId, wordDto);
+
+        return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
+    }
+
+    @Transactional
+    @PutMapping(value = {"/{word_id}/details"})
+    public ResponseEntity<WordDto> updateWordWithDetails(@Valid @RequestBody CreateWordWithDetailRequest request,
+                                                         @PathVariable(value = "word_id") Long wordId) {
+
+        //TODO: 這裡不應該把業務邏輯寫在 Controller 中
+
+        Word word = wordService.getWordEntityById(wordId);
+        word.setName(request.getName());
+
+        for (DefinitionDto definitionDto : request.getDefinitions()) {
+            Definition definition = definitionService.updateDefinitionAndGetEntity(definitionDto.getId(), definitionDto);
+
+            if (!definition.getWord().getId().equals(wordId)) {
+                throw new ResourceRelationException("Word", wordId, "Definition", definition.getId());
+            }
+
+            for (CollocationDto collocationDto : definitionDto.getCollocations()) {
+                Collocation collocation = collocationService.updateCollocationAndGetEntity(collocationDto.getId(), collocationDto);
+
+                if (!collocation.getDefinition().getId().equals(definition.getId())) {
+                    throw new ResourceRelationException("Definition", definition.getId(), "Collocation", collocation.getId());
+                }
+
+                for (SentenceDto sentenceDto : collocationDto.getSentences()) {
+                    Sentence savedSentence = sentenceService.updateSentenceAndGetEntity(sentenceDto.getId(), sentenceDto);
+
+                    if (!savedSentence.getCollocation().getId().equals(collocation.getId())) {
+                        throw new ResourceRelationException("Collocation", collocation.getId(), "Sentence", savedSentence.getId());
+                    }
+                }
+
+                collocationService.saveCollocation(collocation);
+            }
+
+            definitionService.saveDefinition(definition);
+        }
+
+        Word savedWord = wordService.saveWord(word);
+
+        WordDto responseWordDto = wordService.mapToDto(savedWord);
 
         return new ResponseEntity<>(responseWordDto, HttpStatus.OK);
     }

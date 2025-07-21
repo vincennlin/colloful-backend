@@ -20,5 +20,7 @@ public interface SentenceService {
 
     SentenceDto updateSentence(Long sentenceId, SentenceDto sentenceDto);
 
+    Sentence updateSentenceAndGetEntity(Long sentenceId, SentenceDto sentenceDto);
+
     void deleteSentenceById(Long sentenceId);
 }

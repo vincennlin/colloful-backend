@@ -20,6 +20,8 @@ public interface CollocationService {
 
     CollocationDto updateCollocation(Long collocationId, CollocationDto collocationDto);
 
+    Collocation updateCollocationAndGetEntity(Long collocationId, CollocationDto collocationDto);
+
     void deleteCollocationById(Long collocationId);
 
     Collocation saveCollocation(Collocation collocation);

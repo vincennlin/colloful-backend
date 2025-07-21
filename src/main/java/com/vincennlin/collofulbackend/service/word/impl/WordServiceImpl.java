@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,12 +52,14 @@ public class WordServiceImpl implements WordService {
         return word;
     }
 
+    @Transactional
     @Override
     public WordDto createWord(WordDto wordDto) {
 
         return wordMapper.mapToDto(createWordAndGetEntity(wordDto));
     }
 
+    @Transactional
     @Override
     public Word createWordAndGetEntity(WordDto wordDto) {
 
@@ -65,10 +68,15 @@ public class WordServiceImpl implements WordService {
         return wordRepository.save(word);
     }
 
+    @Transactional
     @Override
     public WordDto updateWord(Long wordId, WordDto wordDto) {
 
         Word word = getWordEntityById(wordId);
+
+        if (wordDto.getName() == null || wordDto.getName().isBlank()) {
+            throw new IllegalArgumentException("Word name cannot be null or empty");
+        }
 
         word.setName(wordDto.getName());
 
@@ -77,6 +85,7 @@ public class WordServiceImpl implements WordService {
         return wordMapper.mapToDto(savedWord);
     }
 
+    @Transactional
     @Override
     public void deleteWordById(Long wordId) {
 
@@ -85,6 +94,7 @@ public class WordServiceImpl implements WordService {
         wordRepository.delete(word);
     }
 
+    @Transactional
     @Override
     public Word saveWord(Word word) {
         return wordRepository.save(word);

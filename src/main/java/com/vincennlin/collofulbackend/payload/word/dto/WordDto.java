@@ -1,6 +1,7 @@
 package com.vincennlin.collofulbackend.payload.word.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,8 @@ public class WordDto {
     }
 
     @JsonProperty(
-            value = "id",
-            access = JsonProperty.Access.READ_ONLY
+            value = "id"
+//            access = JsonProperty.Access.READ_ONLY
     )
     private Long id;
 
@@ -31,6 +32,7 @@ public class WordDto {
     private Long userId;
 
     @JsonProperty(value = "name", required = true)
+    @NotEmpty
     private String name;
 
     @JsonProperty(value = "definitions")

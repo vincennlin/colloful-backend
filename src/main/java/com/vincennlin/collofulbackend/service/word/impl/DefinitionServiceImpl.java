@@ -11,6 +11,7 @@ import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.DefinitionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,12 +48,14 @@ public class DefinitionServiceImpl implements DefinitionService {
         return definition;
     }
 
+    @Transactional
     @Override
     public DefinitionDto createDefinition(DefinitionDto definitionDto, Word word) {
 
         return definitionMapper.mapToDto(createDefinitionAndGetEntity(definitionDto, word));
     }
 
+    @Transactional
     @Override
     public Definition createDefinitionAndGetEntity(DefinitionDto definitionDto, Word word) {
 
@@ -62,19 +65,33 @@ public class DefinitionServiceImpl implements DefinitionService {
         return definitionRepository.save(definition);
     }
 
+    @Transactional
     @Override
     public DefinitionDto updateDefinition(Long definitionId, DefinitionDto definitionDto) {
 
+        return definitionMapper.mapToDto(updateDefinitionAndGetEntity(definitionId, definitionDto));
+    }
+
+    @Transactional
+    @Override
+    public Definition updateDefinitionAndGetEntity(Long definitionId, DefinitionDto definitionDto) {
+
         Definition definition = getDefinitionEntityById(definitionId);
+
+        if (definitionDto.getMeaning() == null || definitionDto.getMeaning().isBlank()) {
+            throw new IllegalArgumentException("Definition meaning cannot be null or empty");
+        }
+        if (definitionDto.getPartOfSpeech() == null) {
+            throw new IllegalArgumentException("Part of speech cannot be null");
+        }
 
         definition.setMeaning(definitionDto.getMeaning());
         definition.setPartOfSpeech(definitionDto.getPartOfSpeech());
 
-        Definition savedDefinition = definitionRepository.save(definition);
-
-        return definitionMapper.mapToDto(savedDefinition);
+        return definitionRepository.save(definition);
     }
 
+    @Transactional
     @Override
     public void deleteDefinitionById(Long definitionId) {
 
@@ -86,6 +103,7 @@ public class DefinitionServiceImpl implements DefinitionService {
         definitionRepository.delete(definition);
     }
 
+    @Transactional
     @Override
     public Definition saveDefinition(Definition definition) {
         return definitionRepository.save(definition);

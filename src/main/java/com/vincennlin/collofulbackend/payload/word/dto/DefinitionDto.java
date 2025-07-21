@@ -3,6 +3,7 @@ package com.vincennlin.collofulbackend.payload.word.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vincennlin.collofulbackend.payload.word.PartOfSpeech;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,22 +26,24 @@ public class DefinitionDto {
     }
 
     @JsonProperty(
-            value = "id",
-            access = JsonProperty.Access.READ_ONLY
+            value = "id"
+//            access = JsonProperty.Access.READ_ONLY
     )
     private Long id;
 
     @JsonProperty(
-            value = "word_name",
-            access = JsonProperty.Access.READ_ONLY
+            value = "word_name"
+//            access = JsonProperty.Access.READ_ONLY
     )
     private String wordName;
 
     @JsonProperty(value = "meaning", required = true)
+    @NotEmpty
     private String meaning;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value = "part_of_speech", required = true)
+    @NotEmpty
     private PartOfSpeech partOfSpeech;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

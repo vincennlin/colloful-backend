@@ -1,6 +1,7 @@
 package com.vincennlin.collofulbackend.payload.word.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +19,13 @@ public class SentenceDto {
     }
 
     @JsonProperty(
-            value = "id",
-            access = JsonProperty.Access.READ_ONLY
+            value = "id"
+//            access = JsonProperty.Access.READ_ONLY
     )
     private Long id;
 
     @JsonProperty(value = "content", required = true)
+    @NotEmpty
     private String content;
 
     @JsonProperty(value = "translation")
