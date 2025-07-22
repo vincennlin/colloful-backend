@@ -15,8 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(
-        name = "collocations",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"content", "definition_id"})
+        name = "collocations"
+//        uniqueConstraints = @UniqueConstraint(columnNames = {"content", "definition_id"})
 )
 public class Collocation {
 

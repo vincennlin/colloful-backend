@@ -16,10 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(
-        name = "definitions",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"meaning", "word_id"})
-        }
+        name = "definitions"
+//        uniqueConstraints = {
+//                @UniqueConstraint(columnNames = {"meaning", "word_id"})
+//        }
 )
 public class Definition {
 

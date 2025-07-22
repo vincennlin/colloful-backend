@@ -1,13 +1,12 @@
 package com.vincennlin.collofulbackend.service.ai.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vincennlin.collofulbackend.payload.word.PartOfSpeech;
 import com.vincennlin.collofulbackend.payload.word.dto.CollocationDto;
 import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.payload.word.dto.SentenceDto;
-import com.vincennlin.collofulbackend.payload.word.request.CreateCollocationsForDefinitionRequest;
-import com.vincennlin.collofulbackend.payload.word.request.DefinitionCollocationExample;
-import com.vincennlin.collofulbackend.payload.word.request.GenerateCollocationsForDefinitionRequest;
+import com.vincennlin.collofulbackend.payload.word.request.*;
 import com.vincennlin.collofulbackend.service.ai.AiService;
 import lombok.AllArgsConstructor;
 import org.springframework.ai.chat.messages.Message;
@@ -42,12 +41,12 @@ public class AiServiceImpl implements AiService {
     @Override
     public CreateCollocationsForDefinitionRequest generateCollocationsForDefinition(GenerateCollocationsForDefinitionRequest request) {
 
-        List<DefinitionCollocationExample> examples = getExamples();
+        List<DefinitionCollocationExample> examples = getCollocationExamples();
 
         List<Message> messages = List.of(
-                getInitialSystemMessage(examples),
-                getFormatExampleMessage(examples),
-                new UserMessage(getRequestString(request))
+                getGenerateCollocationsForDefinitionInitialSystemMessage(examples),
+                getGenerateCollocationsForDefinitionFormatExampleMessage(examples),
+                new UserMessage(getGenerateCollocationsForDefinitionRequestString(request))
         );
 
         Prompt prompt = new Prompt(messages);
@@ -65,7 +64,33 @@ public class AiServiceImpl implements AiService {
         }
     }
 
-    private Message getInitialSystemMessage(List<DefinitionCollocationExample> examples) {
+    @Override
+    public CreateWordWithDetailRequest generateWordFromContent(GenerateWordFromContentRequest request) {
+
+        List<GenerateWordFromContentExample> examples = getGenerateWordFromContentExamples();
+
+        List<Message> messages = List.of(
+                getGenerateWordFromContentInitialSystemMessage(examples),
+                getGenerateWordFromContentFormatExampleMessage(examples),
+                new UserMessage(getGenerateWordFromContentRequestString(request))
+        );
+
+        Prompt prompt = new Prompt(messages);
+
+        ChatResponse response = openAiChatModel.call(prompt);
+
+        String responseContent = response.getResults().get(0).getOutput().getText();
+
+        responseContent = preProcessJson(responseContent);
+
+        try{
+            return objectMapper.readValue(responseContent, CreateWordWithDetailRequest.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse AI response: " + responseContent, e);
+        }
+    }
+
+    private Message getGenerateCollocationsForDefinitionInitialSystemMessage(List<DefinitionCollocationExample> examples) {
 
         StringBuilder message = new StringBuilder("你的任務是根據收到的單字定義，生成與該單字相關的搭配詞。\\n" +
                 "你會收到一個英文單字的名稱、詞性與定義，請根據這些資訊生成搭配詞。\\n" +
@@ -89,7 +114,7 @@ public class AiServiceImpl implements AiService {
         return new SystemMessage(message.toString());
     }
 
-    private Message getFormatExampleMessage(List<DefinitionCollocationExample> examples) {
+    private Message getGenerateCollocationsForDefinitionFormatExampleMessage(List<DefinitionCollocationExample> examples) {
 
         CreateCollocationsForDefinitionRequest exampleOutput = examples.get(2).getExampleOutput();
 
@@ -108,7 +133,7 @@ public class AiServiceImpl implements AiService {
         );
     }
 
-    private List<DefinitionCollocationExample> getExamples() {
+    private List<DefinitionCollocationExample> getCollocationExamples() {
 
         List<DefinitionCollocationExample> examples = new ArrayList<>();
 
@@ -163,7 +188,121 @@ public class AiServiceImpl implements AiService {
         return examples;
     }
 
-    private String getRequestString(GenerateCollocationsForDefinitionRequest request) {
+    private Message getGenerateWordFromContentInitialSystemMessage(List<GenerateWordFromContentExample> examples) {
+
+        StringBuilder message = new StringBuilder("你的任務是根據收到的英文內容，整理格式並回傳該英文單字相關的定義、搭配詞、例句。\\n" +
+                "你會收到一段英文內容、裡面包含詞性、定義、例句，請根據這些資訊整理格式並回傳。\\n" +
+                "以下為所有詞性 part_of_speech 的選項，回傳時請確保詞性為下列其中一種：[\"N\", \"PRON\", \"VT\", \"VI\", \"ADV\", \"ADJ\", \"PREP\", \"CONJ\", \"DET\", \"INTERJ\", \"NUM\", \"PHR\", \"ABBR\"]\n" +
+                "請注意，請確保你生成的內容都與用戶提供的資訊相關聯，這是最重要的要求。\\n");
+
+        message.append("以下是範例的輸入和輸出：");
+
+        for (GenerateWordFromContentExample example : examples) {
+            try{
+                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                message.append(objectMapper.writeValueAsString(example));
+            } catch (Exception e) {
+                message.append("Exception occurred while writing example: ").append(e.getMessage());
+            }
+        }
+
+        message.append("請注意，以上僅為輸入與輸出範例。");
+
+        return new SystemMessage(message.toString());
+    }
+
+    private Message getGenerateWordFromContentFormatExampleMessage(List<GenerateWordFromContentExample> examples) {
+
+        CreateWordWithDetailRequest exampleOutput = examples.get(0).getExampleOutput();
+
+        String exampleOutputString;
+
+        try {
+            exampleOutputString = objectMapper.writeValueAsString(exampleOutput);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert example output to JSON: " + e.getMessage(), e);
+        }
+
+        return new SystemMessage(
+                "以下是一個範例的json格式回應：\n\n" +
+                        exampleOutputString + "\n\n" +
+                        "請注意，以上json回應僅為格式範例，實際生成內容請依照收到你收到的內容生成。\n\n"
+        );
+    }
+
+    private List<GenerateWordFromContentExample> getGenerateWordFromContentExamples() {
+
+        List<GenerateWordFromContentExample> examples = new ArrayList<>();
+
+        GenerateWordFromContentExample generateExample1 = new GenerateWordFromContentExample();
+        examples.add(generateExample1);
+
+        GenerateWordFromContentRequest exampleInput1 = new GenerateWordFromContentRequest();
+        exampleInput1.setContent("""
+                lead
+                verb
+                
+                B2 [T]
+                to control a group of people, a country, or a situation
+                領導，帶領，率領
+                She was chosen to lead the team in the project.
+                她被選在這個專案中帶領團隊。
+                """);
+        generateExample1.setExampleInput(exampleInput1);
+
+        CreateWordWithDetailRequest exampleOutput1 = new CreateWordWithDetailRequest("lead");
+        generateExample1.setExampleOutput(exampleOutput1);
+
+        DefinitionDto definition1 = new DefinitionDto(exampleOutput1.getName(), "領導，帶領，率領", PartOfSpeech.VT);
+        exampleOutput1.getDefinitions().add(definition1);
+
+        CollocationDto collocation1 = new CollocationDto("lead the team", "帶領團隊");
+        definition1.getCollocations().add(collocation1);
+
+        SentenceDto sentence1 = new SentenceDto("She was chosen to lead the team in the project.", "她被選在這個專案中帶領團隊。");
+        collocation1.getSentences().add(sentence1);
+
+
+        GenerateWordFromContentExample generateExample2 = new GenerateWordFromContentExample();
+        examples.add(generateExample2);
+
+        GenerateWordFromContentRequest exampleInput2 = new GenerateWordFromContentRequest();
+        exampleInput2.setContent("""
+                lead
+                noun
+                
+                B2 [ S ]
+                a winning position during a race or other situation where people are competing
+                領先，佔優
+                The team took the lead in the second half of the game.
+                這支球隊在比賽的下半場取得了領先。
+                The runner had a lead of 10 seconds over the second place.
+                這位跑者領先第二名10秒鐘。
+                """);
+        generateExample2.setExampleInput(exampleInput2);
+
+        CreateWordWithDetailRequest exampleOutput2 = new CreateWordWithDetailRequest("lead");
+        generateExample2.setExampleOutput(exampleOutput2);
+
+        DefinitionDto definition2 = new DefinitionDto("lead", "領先，佔優", PartOfSpeech.N);
+        exampleOutput2.getDefinitions().add(definition2);
+
+        CollocationDto collocation2 = new CollocationDto("take the lead", "取得領先");
+        definition2.getCollocations().add(collocation2);
+
+        SentenceDto sentence2 = new SentenceDto("The team took the lead in the second half of the game.", "這支球隊在比賽的下半場取得了領先。");
+        collocation2.getSentences().add(sentence2);
+
+        CollocationDto collocation3 = new CollocationDto("a lead of ...", "領先...的差距");
+        definition2.getCollocations().add(collocation3);
+
+        SentenceDto sentence3 = new SentenceDto("The runner had a lead of 10 seconds over the second place.", "這位跑者領先第二名10秒鐘。");
+        collocation3.getSentences().add(sentence3);
+
+        return examples;
+    }
+
+    private String getGenerateCollocationsForDefinitionRequestString(GenerateCollocationsForDefinitionRequest request) {
 //        try {
 //            return objectMapper.writeValueAsString(request);
 //        } catch (Exception e) {
@@ -173,6 +312,14 @@ public class AiServiceImpl implements AiService {
         return "單字名稱：" + request.getWordName() + "\n" +
                 "詞性：" + request.getPartOfSpeech().getChinese() + "\n" +
                 "中文含義：" + request.getMeaning() + "\n";
+    }
+
+    private String getGenerateWordFromContentRequestString(GenerateWordFromContentRequest request) {
+        try {
+            return objectMapper.writeValueAsString(request);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert request to JSON: " + e.getMessage(), e);
+        }
     }
 
     private String preProcessJson(String json) {

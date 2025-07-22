@@ -2,12 +2,12 @@ package com.vincennlin.collofulbackend.controller;
 
 import com.vincennlin.collofulbackend.payload.constants.PageConstants;
 import com.vincennlin.collofulbackend.payload.review.ReviewRequest;
-import com.vincennlin.collofulbackend.payload.review.dto.ReviewInfoDto;
 import com.vincennlin.collofulbackend.payload.review.dto.ReviewStateDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
 import com.vincennlin.collofulbackend.payload.word.request.CreateWordWithDetailRequest;
 import com.vincennlin.collofulbackend.payload.word.request.GenerateRequest;
+import com.vincennlin.collofulbackend.payload.word.request.GenerateWordFromContentRequest;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import com.vincennlin.collofulbackend.service.ai.AiService;
 import com.vincennlin.collofulbackend.service.review.ReviewService;
@@ -78,6 +78,21 @@ public class WordController {
         return new ResponseEntity<>(wordDto, HttpStatus.OK);
     }
 
+    @GetMapping(value = {"/search"})
+    public ResponseEntity<WordPageResponse> searchWordsByName(
+            @RequestParam(name = "name", required = true) String name,
+            @RequestParam(name = "pageNo", defaultValue = PageConstants.DEFAULT_PAGE_NUMBER, required = false) @Min(0) Integer pageNo,
+            @RequestParam(name = "pageSize", defaultValue = PageConstants.DEFAULT_PAGE_SIZE, required = false) @Max(100) @Min(1) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = PageConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = PageConstants.DEFAULT_SORT_DIR, required = false) String sortDir) {
+
+        Pageable pageable = getPageable(pageNo, pageSize, sortBy, sortDir);
+
+        WordPageResponse wordPageResponse = wordService.searchWordsContainingByName(name, pageable);
+
+        return new ResponseEntity<>(wordPageResponse, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<WordDto> createWord(@Valid @RequestBody WordDto wordDto) {
 
@@ -90,6 +105,14 @@ public class WordController {
     public ResponseEntity<WordDto> createWordWithDetails(@Valid @RequestBody CreateWordWithDetailRequest request) {
 
         WordDto responseWordDto = wordService.createWordWithDetail(request.getName(), request.getDefinitions());
+
+        return new ResponseEntity<>(responseWordDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = {"/details/generate"})
+    public ResponseEntity<WordDto> generateWordWithDetailsFromContent(@Valid @RequestBody GenerateWordFromContentRequest request) {
+
+        WordDto responseWordDto = wordService.generateWordWithDetailFromContent(request);
 
         return new ResponseEntity<>(responseWordDto, HttpStatus.CREATED);
     }

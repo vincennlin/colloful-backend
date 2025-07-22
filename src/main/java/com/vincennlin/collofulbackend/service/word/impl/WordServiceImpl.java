@@ -9,8 +9,11 @@ import com.vincennlin.collofulbackend.mapper.word.WordMapper;
 import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
+import com.vincennlin.collofulbackend.payload.word.request.CreateWordWithDetailRequest;
+import com.vincennlin.collofulbackend.payload.word.request.GenerateWordFromContentRequest;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import com.vincennlin.collofulbackend.repository.word.WordRepository;
+import com.vincennlin.collofulbackend.service.ai.AiService;
 import com.vincennlin.collofulbackend.service.user.UserService;
 import com.vincennlin.collofulbackend.service.word.DefinitionService;
 import com.vincennlin.collofulbackend.service.word.WordService;
@@ -31,6 +34,7 @@ public class WordServiceImpl implements WordService {
 
     private final UserService userService;
     private final DefinitionService definitionService;
+    private final AiService aiService;
 
     private final WordRepository wordRepository;
 
@@ -65,6 +69,27 @@ public class WordServiceImpl implements WordService {
         checkWordOwnership(word);
 
         return word;
+    }
+
+    @Override
+    public Word findByName(String wordName) {
+
+        Word word = wordRepository.findByNameAndUserId(wordName, userService.getCurrentUserId())
+                .orElse(null);
+
+        if (word != null) {
+            checkWordOwnership(word);
+        }
+
+        return word;
+    }
+
+    @Override
+    public WordPageResponse searchWordsContainingByName(String wordName, Pageable pageable) {
+
+        Page<Word> pageOfWords = wordRepository.searchByNameContainingAndUserId(wordName, userService.getCurrentUserId(), pageable);
+
+        return getWordPageResponse(pageOfWords);
     }
 
     @Transactional
@@ -102,6 +127,26 @@ public class WordServiceImpl implements WordService {
         newWord.setDefinitions(savedDefinitions);
 
         return wordMapper.mapToDto(wordRepository.save(newWord));
+    }
+
+    @Transactional
+    @Override
+    public WordDto generateWordWithDetailFromContent(GenerateWordFromContentRequest request) {
+
+        CreateWordWithDetailRequest createRequest = aiService.generateWordFromContent(request);
+
+        String wordName = createRequest.getName();
+
+        Word word = findByName(wordName);
+
+        if (word == null) {
+            return createWordWithDetail(wordName, createRequest.getDefinitions());
+        } else {
+
+            definitionService.createDefinitionsForWord(createRequest.getDefinitions(), word);
+
+            return getWordById(word.getId());
+        }
     }
 
     @Transactional

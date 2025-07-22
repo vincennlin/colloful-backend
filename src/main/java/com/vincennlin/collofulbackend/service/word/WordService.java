@@ -4,6 +4,7 @@ import com.vincennlin.collofulbackend.entity.word.Word;
 import com.vincennlin.collofulbackend.payload.word.dto.DefinitionDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordDto;
 import com.vincennlin.collofulbackend.payload.word.dto.WordMarkDto;
+import com.vincennlin.collofulbackend.payload.word.request.GenerateWordFromContentRequest;
 import com.vincennlin.collofulbackend.payload.word.response.WordPageResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +19,17 @@ public interface WordService {
 
     Word getWordEntityById(Long wordId);
 
+    Word findByName(String wordName);
+
+    WordPageResponse searchWordsContainingByName(String wordName, Pageable pageable);
+
     WordDto createWord(WordDto wordDto);
 
     Word createWordAndGetEntity(WordDto wordDto);
 
     WordDto createWordWithDetail(String wordName, List<DefinitionDto> definitionDtoList);
+
+    WordDto generateWordWithDetailFromContent(GenerateWordFromContentRequest request);
 
     WordDto updateWord(Long wordId, WordDto wordDto);
 
