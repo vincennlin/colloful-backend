@@ -18,7 +18,12 @@ public enum ReviewOption implements AbstractReviewOption {
     HARD {
         @Override
         public Integer getInterval(Integer level) {
-            return 1;
+            return 0;
+        }
+
+        @Override
+        public LocalDateTime getNextReviewTime(LocalDateTime now, Integer reviewInterval) {
+            return now.plusDays(1);
         }
     },
 
