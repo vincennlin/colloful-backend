@@ -1,10 +1,17 @@
 package com.vincennlin.collofulbackend.payload.review;
 
+import java.time.LocalDateTime;
+
 public enum ReviewOption implements AbstractReviewOption {
     AGAIN {
         @Override
         public Integer getInterval(Integer level) {
             return 0;
+        }
+
+        @Override
+        public LocalDateTime getNextReviewTime(LocalDateTime now, Integer reviewInterval) {
+            return now;
         }
     },
 

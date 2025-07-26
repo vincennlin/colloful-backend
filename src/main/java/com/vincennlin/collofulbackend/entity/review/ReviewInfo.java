@@ -65,7 +65,7 @@ public class ReviewInfo {
 
         LocalDateTime now = LocalDateTime.now();
         this.lastReviewed = now;
-        this.nextReview = now.plusDays(this.reviewInterval);
+        this.nextReview = option.getNextReviewTime(now, reviewInterval);
     }
 
     public ReviewState createState(ReviewOption option) {
