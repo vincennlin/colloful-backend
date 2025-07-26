@@ -103,6 +103,7 @@ public class AiServiceImpl implements AiService {
 
         for (DefinitionCollocationExample example : examples) {
             try{
+                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 message.append(objectMapper.writeValueAsString(example));
             } catch (Exception e) {
                 message.append("Exception occurred while writing example: ").append(e.getMessage());
