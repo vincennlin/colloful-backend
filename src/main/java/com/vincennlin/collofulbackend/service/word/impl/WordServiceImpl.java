@@ -158,9 +158,9 @@ public class WordServiceImpl implements WordService {
         Word word = getWordEntityById(wordId);
 
         word.setName(wordDto.getName());
-        word.setImportant(wordDto.isImportant());
-        word.setMistaken(wordDto.isMistaken());
-        word.setReviewToday(wordDto.isReviewToday());
+//        word.setImportant(wordDto.isImportant());
+//        word.setMistaken(wordDto.isMistaken());
+//        word.setReviewToday(wordDto.isReviewToday());
 
         if (wordDto.getDefinitions() != null) {
             int size = wordDto.getDefinitions().size();
