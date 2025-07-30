@@ -60,7 +60,7 @@ public class ReviewInfo {
     public void review(ReviewOption option) {
         pushReviewState(this.createState(option));
 
-        this.reviewInterval += option.getInterval(this.reviewLevel);
+        this.reviewInterval += option.getIntervalIncrement(this.reviewInterval);
         this.reviewLevel += 1;
 
         LocalDateTime now = LocalDateTime.now();

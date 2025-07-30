@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public enum ReviewOption implements AbstractReviewOption {
     AGAIN {
         @Override
-        public Integer getInterval(Integer level) {
+        public Integer getIntervalIncrement(Integer interval) {
             return 0;
         }
 
@@ -17,7 +17,7 @@ public enum ReviewOption implements AbstractReviewOption {
 
     HARD {
         @Override
-        public Integer getInterval(Integer level) {
+        public Integer getIntervalIncrement(Integer interval) {
             return 0;
         }
 
@@ -29,15 +29,15 @@ public enum ReviewOption implements AbstractReviewOption {
 
     GOOD {
         @Override
-        public Integer getInterval(Integer level) {
-            return Math.max(2, level * 2);
+        public Integer getIntervalIncrement(Integer interval) {
+            return Math.max(2, interval);
         }
     },
 
     EASY {
         @Override
-        public Integer getInterval(Integer level) {
-            return Math.max(3, level * 3);
+        public Integer getIntervalIncrement(Integer interval) {
+            return Math.max(3, interval * 2);
         }
     }
 }
