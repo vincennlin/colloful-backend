@@ -25,6 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @SecurityScheme(
         name = "Bearer Authentication",
@@ -57,9 +58,10 @@ public class WebSecurity {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:5500"));
+//        config.setAllowedOrigins(Collections.singletonList("http://localhost:5500"));
 //        config.setAllowedOrigins(Collections.singletonList("http://" + apiGatewayIp + ":8765"));
 //        config.setAllowedOrigins(Collections.singletonList("*"));
+        config.addAllowedOriginPattern("*");
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setExposedHeaders(Arrays.asList("Access-Token", "Token-Type"));
