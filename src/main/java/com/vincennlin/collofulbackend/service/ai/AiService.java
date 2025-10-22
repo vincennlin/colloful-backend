@@ -1,15 +1,14 @@
 package com.vincennlin.collofulbackend.service.ai;
 
-import com.vincennlin.collofulbackend.payload.word.request.CreateCollocationsForDefinitionRequest;
-import com.vincennlin.collofulbackend.payload.word.request.CreateWordWithDetailRequest;
-import com.vincennlin.collofulbackend.payload.word.request.GenerateCollocationsForDefinitionRequest;
-import com.vincennlin.collofulbackend.payload.word.request.GenerateWordFromContentRequest;
+import com.vincennlin.collofulbackend.payload.word.request.*;
 
 public interface AiService {
 
     String generateResponse(String message);
 
     CreateCollocationsForDefinitionRequest generateCollocationsForDefinition(GenerateCollocationsForDefinitionRequest request);
+
+    CreateSentencesForCollocationRequest generateSentencesForCollocation(GenerateSentencesForCollocationRequest request);
 
     CreateWordWithDetailRequest generateWordFromContent(GenerateWordFromContentRequest request);
 }

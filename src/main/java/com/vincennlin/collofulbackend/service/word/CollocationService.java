@@ -27,4 +27,6 @@ public interface CollocationService {
     void deleteCollocationById(Long collocationId);
 
     Collocation saveCollocation(Collocation collocation);
+
+    CollocationDto mapToDto(Collocation collocation);
 }

@@ -65,6 +65,32 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
+    public CreateSentencesForCollocationRequest generateSentencesForCollocation(GenerateSentencesForCollocationRequest request) {
+
+        List<DefinitionSentenceExample> examples = getCollocationSentenceExamples();
+
+        List<Message> messages = List.of(
+                getGenerateSentencesForCollocationInitialSystemMessage(examples),
+                getGenerateSentencesForCollocationFormatExampleMessage(examples),
+                new UserMessage(getGenerateSentencesForCollocationRequestString(request))
+        );
+
+        Prompt prompt = new Prompt(messages);
+
+        ChatResponse response = openAiChatModel.call(prompt);
+
+        String responseContent = response.getResults().get(0).getOutput().getText();
+
+        responseContent = preProcessJson(responseContent);
+
+        try{
+            return objectMapper.readValue(responseContent, CreateSentencesForCollocationRequest.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse AI response: " + responseContent, e);
+        }
+    }
+
+    @Override
     public CreateWordWithDetailRequest generateWordFromContent(GenerateWordFromContentRequest request) {
 
         List<GenerateWordFromContentExample> examples = getGenerateWordFromContentExamples();
@@ -115,6 +141,29 @@ public class AiServiceImpl implements AiService {
         return new SystemMessage(message.toString());
     }
 
+    private Message getGenerateSentencesForCollocationInitialSystemMessage(List<DefinitionSentenceExample> examples) {
+
+        StringBuilder message = new StringBuilder("你的任務是根據收到的搭配詞，生成與該搭配詞相關的例句。\\n" +
+                "你會收到一個英文單字的搭配詞，請根據這些資訊生成例句。\\n" +
+                "每個搭配詞請生成一個例句，並包含中文翻譯。\\n" +
+                "請注意，請確保「例句的內容與搭配詞」相關聯，這是最重要的要求。\\n");
+
+        message.append("以下是範例的輸入和輸出：");
+
+        for (DefinitionSentenceExample example : examples) {
+            try{
+                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                message.append(objectMapper.writeValueAsString(example));
+            } catch (Exception e) {
+                message.append("Exception occurred while writing example: ").append(e.getMessage());
+            }
+        }
+
+        message.append("請注意，以上json回應僅為格式範例，實際生成的例句請根據收到的搭配詞生成。");
+
+        return new SystemMessage(message.toString());
+    }
+
     private Message getGenerateCollocationsForDefinitionFormatExampleMessage(List<DefinitionCollocationExample> examples) {
 
         CreateCollocationsForDefinitionRequest exampleOutput = examples.get(2).getExampleOutput();
@@ -131,6 +180,25 @@ public class AiServiceImpl implements AiService {
                 "以下是一個範例的json格式回應：\n\n" +
                         exampleOutputString + "\n\n" +
                         "請注意，以上json回應僅為格式範例，實際生成的搭配詞內容請依照收到的單字生成。\n\n"
+        );
+    }
+
+    private Message getGenerateSentencesForCollocationFormatExampleMessage(List<DefinitionSentenceExample> examples) {
+
+        CreateSentencesForCollocationRequest exampleOutput = examples.get(0).getExampleOutput();
+
+        String exampleOutputString;
+
+        try {
+            exampleOutputString = objectMapper.writeValueAsString(exampleOutput);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert example output to JSON: " + e.getMessage(), e);
+        }
+
+        return new SystemMessage(
+                "以下是一個範例的json格式回應：\n\n" +
+                        exampleOutputString + "\n\n" +
+                        "請注意，以上json回應僅為格式範例，實際生成的例句內容請依照收到的搭配詞生成。\n\n"
         );
     }
 
@@ -185,6 +253,23 @@ public class AiServiceImpl implements AiService {
 
         DefinitionCollocationExample example4 = new DefinitionCollocationExample(definition4, List.of(collocation7, collocation8));
         examples.add(example4);
+
+        return examples;
+    }
+
+    private List<DefinitionSentenceExample> getCollocationSentenceExamples() {
+
+        List<DefinitionSentenceExample> examples = new ArrayList<>();
+
+        DefinitionDto definition = new DefinitionDto("curb", "控制；限制，約束；抑制", PartOfSpeech.N);
+
+        CollocationDto collocation = new CollocationDto("put a curb on …", "控制⋯⋯");
+        definition.getCollocations().add(collocation);
+
+        SentenceDto sentence = new SentenceDto("You must try to put a curb on your bad spending habits.", "你必須試著控制你揮霍無度的壞習慣。");
+
+        DefinitionSentenceExample example = new DefinitionSentenceExample(definition, List.of(sentence));
+        examples.add(example);
 
         return examples;
     }
@@ -313,6 +398,15 @@ public class AiServiceImpl implements AiService {
         return "單字名稱：" + request.getWordName() + "\n" +
                 "詞性：" + request.getPartOfSpeech().getChinese() + "\n" +
                 "中文含義：" + request.getMeaning() + "\n";
+    }
+
+    private String getGenerateSentencesForCollocationRequestString(GenerateSentencesForCollocationRequest request) {
+
+        return "單字名稱：" + request.getWordName() + "\n" +
+                "詞性：" + request.getPartOfSpeech().getChinese() + "\n" +
+                "中文含義：" + request.getDefinitionMeaning() + "\n" +
+                "搭配詞內容：" + request.getCollocationContent() + "\n" +
+                "搭配詞含義：" + request.getCollocationMeaning() + "\n";
     }
 
     private String getGenerateWordFromContentRequestString(GenerateWordFromContentRequest request) {

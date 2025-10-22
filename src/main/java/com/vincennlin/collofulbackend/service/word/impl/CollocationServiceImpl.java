@@ -158,6 +158,11 @@ public class CollocationServiceImpl implements CollocationService {
         }
     }
 
+    @Override
+    public CollocationDto mapToDto(Collocation collocation) {
+        return collocationMapper.mapToDto(collocation);
+    }
+
     private void checkCollocationDtoArguments(CollocationDto collocationDto) {
         if (collocationDto.getContent() == null || collocationDto.getContent().isBlank()) {
             throw new IllegalArgumentException("Collocation content must not be null or empty");
