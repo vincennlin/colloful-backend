@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -37,7 +39,19 @@ public class ReviewServiceImpl implements ReviewService {
 
         Long userId = userService.getCurrentUserId();
 
-        Page<Word> pageOfWords = reviewInfoRepository.findDueWordsByUserId(userId, pageable);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextReviewThreshold;
+
+        // 如果現在時間 < 今天早上 5 點，
+        // 那今天的複習截止時間應該是「今天 5 點」。
+        if (now.getHour() < 5) {
+            nextReviewThreshold = LocalDate.now().atTime(5, 0);
+        } else {
+            // 否則，從早上 5 點後算，截止時間就是「明天 5 點」
+            nextReviewThreshold = LocalDate.now().plusDays(1).atTime(5, 0);
+        }
+
+        Page<Word> pageOfWords = reviewInfoRepository.findDueWordsByUserIdBeforeTime(userId, nextReviewThreshold, pageable);
 
         return wordService.getWordPageResponse(pageOfWords);
     }
