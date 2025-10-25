@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface AbstractReviewOption {
 
-    Integer getIntervalIncrement(Integer interval);
+    Integer getNextInterval(Integer interval);
 
     default LocalDateTime getNextReviewTime(LocalDateTime now, Integer reviewInterval) {
         return now.plusDays(reviewInterval);
