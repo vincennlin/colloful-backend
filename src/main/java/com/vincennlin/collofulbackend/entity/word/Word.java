@@ -29,6 +29,7 @@ public class Word {
     public Word(User user, String name) {
         this.user = user;
         this.name = name;
+        this.important = true;
         this.definitions = new ArrayList<>();
     }
 
