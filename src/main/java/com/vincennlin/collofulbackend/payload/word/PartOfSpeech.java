@@ -18,7 +18,8 @@ public enum PartOfSpeech {
     DET("det.", "Determiner", "限定詞"),
     INTERJ("interj.", "Interjection", "感嘆詞"),
     NUM("num.", "Numeral", "數詞"),
-    ABBR("abbr.", "Abbreviation", "縮寫"),;
+    ABBR("abbr.", "Abbreviation", "縮寫"),
+    MEM("mem.", "Mnemonic", "助記口訣");
 
     private final String abbreviation;
     private final String full;

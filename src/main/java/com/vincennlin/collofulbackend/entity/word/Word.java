@@ -28,7 +28,7 @@ public class Word {
 
     public Word(User user, String name) {
         this.user = user;
-        this.name = name;
+        this.name = name.strip();
         this.important = true;
         this.definitions = new ArrayList<>();
     }
@@ -44,7 +44,7 @@ public class Word {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = true, length = 30)
     private String name;
 
     @Column(name = "important")

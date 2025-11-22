@@ -34,7 +34,7 @@ public class Definition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 50)
     private String meaning;
 
     @Enumerated(EnumType.STRING)
